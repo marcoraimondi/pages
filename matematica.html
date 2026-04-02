@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Matematica Divertente 🌟</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Trebuchet MS', Arial, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 16px 12px 40px;
+}
+
+h1 {
+  text-align: center;
+  color: white;
+  font-size: 22px;
+  margin-bottom: 14px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* Top nav */
+.nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+.nav-btn {
+  padding: 9px 16px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  background: rgba(255,255,255,0.2);
+  color: white;
+  transition: all 0.2s;
+}
+.nav-btn.active {
+  background: white;
+  color: #764ba2;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Card */
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 22px 18px;
+  max-width: 500px;
+  margin: 0 auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+
+.card h2 {
+  text-align: center;
+  color: #764ba2;
+  margin-bottom: 14px;
+  font-size: 20px;
+}
+
+/* Mode toggle */
+.mode-toggle {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+  background: #f0f0f0;
+  border-radius: 50px;
+  padding: 4px;
+}
+.mode-btn {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  background: transparent;
+  color: #888;
+  transition: all 0.2s;
+}
+.mode-btn.active {
+  background: white;
+  color: #764ba2;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+/* Sequence */
+.sequence {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 18px 0;
+}
+.num-box {
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  background: #f0f0ff;
+  color: #333;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #dce0ff;
+}
+.num-box.blank {
+  background: #fff8e1;
+  border: 2px dashed #ffa000;
+  color: #ffa000;
+  font-size: 26px;
+}
+.arrow {
+  font-size: 18px;
+  color: #bbb;
+}
+
+/* Answer row */
+.answer-row {
+  display: flex;
+  gap: 10px;
+  margin: 16px 0 10px;
+}
+.answer-input {
+  flex: 1;
+  height: 54px;
+  border-radius: 12px;
+  border: 2px solid #ddd;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  outline: none;
+  transition: border 0.2s;
+  color: #333;
+}
+.answer-input:focus { border-color: #764ba2; }
+.answer-input.ok { border-color: #2e7d32 !important; background: #f1f8e9; }
+.answer-input.err { border-color: #c62828 !important; background: #ffebee; }
+
+.check-btn {
+  height: 54px;
+  padding: 0 20px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.check-btn:active { transform: scale(0.94); }
+
+/* Feedback */
+.feedback {
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  min-height: 32px;
+  margin-bottom: 6px;
+}
+.feedback.correct { color: #2e7d32; }
+.feedback.wrong { color: #c62828; }
+
+/* New button */
+.new-btn {
+  width: 100%;
+  height: 46px;
+  border-radius: 12px;
+  border: 2px solid #ede7ff;
+  background: #f3f0ff;
+  color: #764ba2;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: background 0.2s;
+}
+.new-btn:hover { background: #ede7ff; }
+
+/* Cruciverba link card */
+.link-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 28px 20px;
+  background: linear-gradient(135deg, #fff8e1, #ffecb3);
+  border-radius: 16px;
+  text-decoration: none;
+  color: #5d4037;
+  font-size: 18px;
+  font-weight: bold;
+  border: 2px solid #ffe082;
+  transition: all 0.2s;
+}
+.link-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+.link-card span { font-size: 36px; }
+
+/* Sections */
+.section { display: none; }
+.section.active { display: block; }
+
+/* Score badge */
+.score-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: #888;
+}
+.score-badge {
+  background: #f3f0ff;
+  color: #764ba2;
+  font-weight: bold;
+  padding: 4px 12px;
+  border-radius: 50px;
+  font-size: 13px;
+}
+</style>
+</head>
+<body>
+
+<h1>🌟 Matematica Divertente</h1>
+
+<nav class="nav">
+  <button class="nav-btn" onclick="showSection('cross', this)">✏️ Cruciverba</button>
+  <button class="nav-btn active" onclick="showSection('plus2', this)">+2 / −2</button>
+  <button class="nav-btn" onclick="showSection('plus5', this)">+5 / −5</button>
+  <button class="nav-btn" onclick="showSection('tens', this)">Decine</button>
+</nav>
+
+<!-- Cruciverba -->
+<div id="section-cross" class="section">
+  <div class="card">
+    <h2>✏️ Cruciverba</h2>
+    <a href="cruciverba.html" class="link-card">
+      <span>✏️</span>
+      Vai al Cruciverba Matematico →
+    </a>
+  </div>
+</div>
+
+<!-- +2 / -2 -->
+<div id="section-plus2" class="section active">
+  <div class="card">
+    <h2>Contare di 2 in 2</h2>
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="p2-add" onclick="setMode('plus2','add')">➕ Addizione</button>
+      <button class="mode-btn" id="p2-sub" onclick="setMode('plus2','sub')">➖ Sottrazione</button>
+    </div>
+    <div class="score-bar">
+      <span id="streak-plus2">🔥 Serie: 0</span>
+      <span class="score-badge" id="score-plus2">⭐ 0 punti</span>
+    </div>
+    <div id="seq-plus2" class="sequence"></div>
+    <div class="answer-row">
+      <input type="number" id="inp-plus2" class="answer-input" placeholder="?"
+             onkeydown="if(event.key==='Enter') check('plus2')">
+      <button class="check-btn" onclick="check('plus2')">✓</button>
+    </div>
+    <div id="fb-plus2" class="feedback"></div>
+    <button class="new-btn" onclick="generate('plus2')">🔄 Nuovo esercizio</button>
+  </div>
+</div>
+
+<!-- +5 / -5 -->
+<div id="section-plus5" class="section">
+  <div class="card">
+    <h2>Contare di 5 in 5</h2>
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="p5-add" onclick="setMode('plus5','add')">➕ Addizione</button>
+      <button class="mode-btn" id="p5-sub" onclick="setMode('plus5','sub')">➖ Sottrazione</button>
+    </div>
+    <div class="score-bar">
+      <span id="streak-plus5">🔥 Serie: 0</span>
+      <span class="score-badge" id="score-plus5">⭐ 0 punti</span>
+    </div>
+    <div id="seq-plus5" class="sequence"></div>
+    <div class="answer-row">
+      <input type="number" id="inp-plus5" class="answer-input" placeholder="?"
+             onkeydown="if(event.key==='Enter') check('plus5')">
+      <button class="check-btn" onclick="check('plus5')">✓</button>
+    </div>
+    <div id="fb-plus5" class="feedback"></div>
+    <button class="new-btn" onclick="generate('plus5')">🔄 Nuovo esercizio</button>
+  </div>
+</div>
+
+<!-- Decine -->
+<div id="section-tens" class="section">
+  <div class="card">
+    <h2>Contare di 10 in 10</h2>
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="t-add" onclick="setMode('tens','add')">➕ Addizione</button>
+      <button class="mode-btn" id="t-sub" onclick="setMode('tens','sub')">➖ Sottrazione</button>
+    </div>
+    <div class="score-bar">
+      <span id="streak-tens">🔥 Serie: 0</span>
+      <span class="score-badge" id="score-tens">⭐ 0 punti</span>
+    </div>
+    <div id="seq-tens" class="sequence"></div>
+    <div class="answer-row">
+      <input type="number" id="inp-tens" class="answer-input" placeholder="?"
+             onkeydown="if(event.key==='Enter') check('tens')">
+      <button class="check-btn" onclick="check('tens')">✓</button>
+    </div>
+    <div id="fb-tens" class="feedback"></div>
+    <button class="new-btn" onclick="generate('tens')">🔄 Nuovo esercizio</button>
+  </div>
+</div>
+
+<script>
+const state = {
+  plus2: { mode: 'add', answer: 0, score: 0, streak: 0 },
+  plus5: { mode: 'add', answer: 0, score: 0, streak: 0 },
+  tens:  { mode: 'add', answer: 0, score: 0, streak: 0 },
+};
+
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('section-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function setMode(type, mode) {
+  state[type].mode = mode;
+  const prefix = type === 'plus2' ? 'p2' : type === 'plus5' ? 'p5' : 't';
+  document.getElementById(prefix + '-add').classList.toggle('active', mode === 'add');
+  document.getElementById(prefix + '-sub').classList.toggle('active', mode === 'sub');
+  generate(type);
+}
+
+function generate(type) {
+  const s = state[type];
+  const add = s.mode === 'add';
+  let start, step;
+
+  if (type === 'plus2') {
+    step = add ? 2 : -2;
+    // ensure all 5 numbers stay between 1 and 60
+    start = add
+      ? Math.floor(Math.random() * 47) + 1        // 1–47
+      : Math.floor(Math.random() * 20) + 16;       // 16–35 → lowest = start-8 ≥ 8
+  } else if (type === 'plus5') {
+    step = add ? 5 : -5;
+    // multiples of 5 only
+    start = add
+      ? (Math.floor(Math.random() * 15) + 1) * 5  // 5–75
+      : (Math.floor(Math.random() * 16) + 5) * 5; // 25–100 → lowest = start-20 ≥ 5
+  } else {
+    step = add ? 10 : -10;
+    // multiples of 10 only
+    start = add
+      ? (Math.floor(Math.random() * 6) + 1) * 10  // 10–60 → highest = start+40 ≤ 100
+      : (Math.floor(Math.random() * 6) + 5) * 10; // 50–100 → lowest = start-40 ≥ 10
+  }
+
+  const nums = [0, 1, 2, 3, 4].map(i => start + i * step);
+  // blank is always position 3 (4th number)
+  s.answer = nums[3];
+
+  const seqEl = document.getElementById('seq-' + type);
+  seqEl.innerHTML = nums.map((n, i) => {
+    const box = (i === 3)
+      ? `<span class="num-box blank">?</span>`
+      : `<span class="num-box">${n}</span>`;
+    const arrow = (i < 4) ? `<span class="arrow">→</span>` : '';
+    return box + arrow;
+  }).join('');
+
+  const inp = document.getElementById('inp-' + type);
+  inp.value = '';
+  inp.className = 'answer-input';
+  document.getElementById('fb-' + type).textContent = '';
+  document.getElementById('fb-' + type).className = 'feedback';
+  inp.focus();
+}
+
+function check(type) {
+  const s = state[type];
+  const inp = document.getElementById('inp-' + type);
+  const fb  = document.getElementById('fb-' + type);
+  const val = parseInt(inp.value);
+  if (isNaN(val)) return;
+
+  if (val === s.answer) {
+    s.score++;
+    s.streak++;
+    updateScore(type);
+    fb.textContent = s.streak >= 3 ? '🔥 Fantastico! +1 ⭐' : '🌟 Bravo! Corretto!';
+    fb.className = 'feedback correct';
+    inp.className = 'answer-input ok';
+    setTimeout(() => generate(type), 1300);
+  } else {
+    s.streak = 0;
+    updateScore(type);
+    fb.textContent = '❌ Riprova!';
+    fb.className = 'feedback wrong';
+    inp.className = 'answer-input err';
+    setTimeout(() => {
+      inp.className = 'answer-input';
+      inp.value = '';
+      inp.focus();
+    }, 900);
+  }
+}
+
+function updateScore(type) {
+  const s = state[type];
+  document.getElementById('score-' + type).textContent = `⭐ ${s.score} punt${s.score === 1 ? 'o' : 'i'}`;
+  document.getElementById('streak-' + type).textContent = `🔥 Serie: ${s.streak}`;
+}
+
+// Init
+generate('plus2');
+generate('plus5');
+generate('tens');
+</script>
+</body>
+</html>

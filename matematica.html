@@ -452,8 +452,12 @@ function genOne(type) {
   }
 
   const nums = [0, 1, 2, 3, 4].map(i => start + i * step);
-  const blankIdx = Math.floor(Math.random() * 3) + 2;
-  return { nums, answer: nums[blankIdx], blankIdx, step, subtype: type };
+  // 2 incognite random (consecutive o no)
+  let i1 = Math.floor(Math.random() * 5);
+  let i2;
+  do { i2 = Math.floor(Math.random() * 5); } while (i2 === i1);
+  const blankIdxs = [i1, i2].sort((a, b) => a - b);
+  return { nums, answers: [nums[blankIdxs[0]], nums[blankIdxs[1]]], blankIdxs, step, subtype: type };
 }
 
 function generateAll(type) {
@@ -468,13 +472,17 @@ function generateAll(type) {
 
 function resetAll(type) {
   for (let i = 0; i < 5; i++) {
-    const inp = document.getElementById(`inp-${type}-${i}`);
-    if (inp) { inp.value = ''; inp.className = 'seq-input'; }
+    for (const pos of [0, 1]) {
+      const inp = document.getElementById(`inp-${type}-${i}-${pos}`);
+      if (inp) { inp.value = ''; inp.className = 'seq-input'; inp.removeAttribute('readonly'); }
+    }
     const rfb = document.getElementById(`rfb-${type}-${i}`);
     if (rfb) rfb.textContent = '';
+    const row = document.getElementById(`row-${type}-${i}`);
+    if (row) row.classList.remove('correct-row', 'wrong-row');
   }
   document.getElementById('vfb-' + type).textContent = '';
-  const first = document.getElementById(`inp-${type}-0`);
+  const first = document.getElementById(`inp-${type}-0-0`);
   if (first) first.focus();
 }
 
@@ -496,21 +504,29 @@ function renderRows(type) {
         arr.textContent = '→';
         row.appendChild(arr);
       }
-      if (i === ex.blankIdx) {
+      if (ex.blankIdxs.includes(i)) {
+        const pos = ex.blankIdxs.indexOf(i); // 0 = prima incognita, 1 = seconda
         const inp = document.createElement('input');
         inp.type = 'number';
         inp.inputMode = 'numeric';
         inp.className = 'seq-input';
-        inp.id = `inp-${type}-${ri}`;
+        inp.id = `inp-${type}-${ri}-${pos}`;
         inp.placeholder = '?';
         inp.autocomplete = 'off';
         inp.addEventListener('keydown', e => {
           if (e.key === 'Enter') {
-            if (ri < 4) {
-              const next = document.getElementById(`inp-${type}-${ri + 1}`);
+            if (pos === 0) {
+              // vai alla seconda incognita della stessa riga
+              const next = document.getElementById(`inp-${type}-${ri}-1`);
               if (next) next.focus();
             } else {
-              verifyAll(type);
+              // seconda incognita: vai alla riga successiva o verifica
+              if (ri < 4) {
+                const next = document.getElementById(`inp-${type}-${ri + 1}-0`);
+                if (next) next.focus();
+              } else {
+                verifyAll(type);
+              }
             }
           }
         });
@@ -531,7 +547,7 @@ function renderRows(type) {
     container.appendChild(row);
   });
 
-  const first = document.getElementById(`inp-${type}-0`);
+  const first = document.getElementById(`inp-${type}-0-0`);
   if (first) first.focus();
 }
 
@@ -540,22 +556,29 @@ function verifyAll(type) {
   let correct = 0;
 
   s.exercises.forEach((ex, ri) => {
-    const inp = document.getElementById(`inp-${type}-${ri}`);
-    const fb  = document.getElementById(`rfb-${type}-${ri}`);
-    const row = document.getElementById(`row-${type}-${ri}`);
+    const inp0 = document.getElementById(`inp-${type}-${ri}-0`);
+    const inp1 = document.getElementById(`inp-${type}-${ri}-1`);
+    const fb   = document.getElementById(`rfb-${type}-${ri}`);
+    const row  = document.getElementById(`row-${type}-${ri}`);
 
-    const val = parseInt(inp.value);
-    inp.setAttribute('readonly', true);
+    const val0 = parseInt(inp0.value);
+    const val1 = parseInt(inp1.value);
+    inp0.setAttribute('readonly', true);
+    inp1.setAttribute('readonly', true);
 
     row.classList.remove('correct-row', 'wrong-row');
 
-    if (!isNaN(val) && val === ex.answer) {
-      inp.className = 'seq-input ok';
+    const ok0 = !isNaN(val0) && val0 === ex.answers[0];
+    const ok1 = !isNaN(val1) && val1 === ex.answers[1];
+
+    inp0.className = 'seq-input ' + (ok0 ? 'ok' : 'err');
+    inp1.className = 'seq-input ' + (ok1 ? 'ok' : 'err');
+
+    if (ok0 && ok1) {
       fb.textContent = '✅';
       row.classList.add('correct-row');
       correct++;
     } else {
-      inp.className = 'seq-input err';
       fb.textContent = '❌';
       row.classList.add('wrong-row');
     }

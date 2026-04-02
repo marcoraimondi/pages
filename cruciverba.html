@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Cruciverba Matematici</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Trebuchet MS', Arial, sans-serif;
+  background: #f0f0f0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 12px 40px;
+  gap: 20px;
+}
+
+h1 {
+  font-size: clamp(13px, 4vw, 22px);
+  font-weight: 900;
+  color: #e05a00;
+  border: 3px solid #e05a00;
+  padding: 9px 20px;
+  border-radius: 6px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #888;
+  text-align: center;
+  max-width: 360px;
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 18px 14px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.1);
+  overflow-x: auto;
+  max-width: 100vw;
+}
+
+/* 9 columns × 5 rows */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(9, auto);
+  gap: 5px;
+  align-items: center;
+  justify-items: center;
+}
+
+/* ── NUMBER CELLS ── */
+.num-cell {
+  width: 52px;
+  height: 52px;
+  border: 2.5px solid #333;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 900;
+  background: white;
+}
+.num-cell.given { color: #111; }
+.num-cell.blank {
+  background: #e8f4fd;
+  border-color: #1565c0;
+}
+.num-cell.blank input {
+  width: 100%; height: 100%;
+  border: none; border-radius: 6px;
+  text-align: center;
+  font-size: 20px; font-weight: 900;
+  color: #1565c0;
+  background: transparent;
+  outline: none; padding: 0;
+  font-family: inherit;
+  -webkit-appearance: none;
+}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+.num-cell.correct { border-color: #2e7d32 !important; background: #e8f5e9 !important; }
+.num-cell.correct input { color: #2e7d32; }
+.num-cell.wrong   { border-color: #c62828 !important; background: #ffebee !important; }
+.num-cell.wrong   input { color: #c62828; animation: shake .4s; }
+
+@keyframes shake {
+  0%,100%{ transform:translateX(0) }
+  25%    { transform:translateX(-5px) }
+  75%    { transform:translateX(5px) }
+}
+
+/* ── OPERATORS / EQUALS ── */
+.op-h  { width:26px; height:52px; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:800; color:#e05a00; }
+.eq-h  { width:26px; height:52px; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:700; color:#555; }
+.op-v  { width:52px; height:26px; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:800; color:#e05a00; }
+.eq-v  { width:52px; height:26px; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:700; color:#555; }
+.spc   { width:26px; height:26px; }
+
+/* ── BUTTONS ── */
+.buttons {
+  display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+}
+.btn {
+  padding: 13px 26px; font-size: 16px; font-weight: 800;
+  border: none; border-radius: 12px; cursor: pointer;
+  touch-action: manipulation;
+  transition: opacity .15s, transform .1s;
+}
+.btn:active { transform: scale(0.95); opacity: .85; }
+.btn-verify { background: #e05a00; color: white; }
+.btn-reset  { background: #607d8b; color: white; }
+.btn-new    { background: #222;    color: white; }
+
+/* ── FEEDBACK ── */
+.feedback {
+  font-size: 17px; font-weight: 700;
+  min-height: 26px; text-align: center; padding: 0 10px;
+}
+.feedback.ok   { color: #2e7d32; }
+.feedback.err  { color: #c62828; }
+.feedback.warn { color: #e65100; }
+</style>
+</head>
+<body>
+
+<h1>Cruciverba Matematici</h1>
+<p class="subtitle">Completa le caselle blu. Le equazioni devono tornare sia → che ↓</p>
+
+<div class="card">
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="buttons">
+  <button class="btn btn-verify" onclick="verify()">✓ Verifica</button>
+  <button class="btn btn-reset"  onclick="resetInputs()">↺ Ricomincia</button>
+  <button class="btn btn-new"    onclick="newPuzzle()">＋ Nuovo</button>
+</div>
+
+<div class="feedback" id="feedback"></div>
+
+<script>
+/*
+  STRUTTURA GRIGLIA (9 colonne × 5 righe):
+
+  Riga 0: [a0] op1_0 [b0] = [c0] op2_0 [d0] = [e0]
+  Riga 1:  opA  spc   spc  spc   opC   spc   spc  spc  opE
+  Riga 2: [a1] op1_1 [b1] = [c1] op2_1 [d1] = [e1]
+  Riga 3:  =    spc   spc  spc    =    spc   spc  spc   =
+  Riga 4: [a2] op1_2 [b2] = [c2] op2_2 [d2] = [e2]
+
+  Equazioni orizzontali (6 totali, 2 per riga):
+    Riga 0: a0 op1_0 b0 = c0  |  c0 op2_0 d0 = e0
+    Riga 1: a1 op1_1 b1 = c1  |  c1 op2_1 d1 = e1
+    Riga 2: a2 op1_2 b2 = c2  |  c2 op2_2 d2 = e2
+
+  Equazioni verticali (3 totali):
+    Col 0: a0 opA a1 = a2
+    Col 4: c0 opC c1 = c2
+    Col 8: e0 opE e1 = e2
+*/
+
+let P = null;
+
+const rand  = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+const pick  = ()     => Math.random() < 0.5 ? '+' : '-';
+const apply = (a, op, b) => op === '+' ? a + b : a - b;
+const ok    = (...vals)  => vals.every(v => Number.isInteger(v) && v >= 1 && v <= 20);
+
+function generate() {
+  for (let t = 0; t < 200000; t++) {
+    const a0=rand(2,15), b0=rand(1,12), d0=rand(1,12);
+    const a1=rand(2,15), b1=rand(1,12), d1=rand(1,12);
+    const op1_0=pick(), op2_0=pick(), op1_1=pick(), op2_1=pick();
+    const opA=pick(), opC=pick(), opE=pick();
+    const op1_2=pick(), op2_2=pick();
+
+    const c0 = apply(a0, op1_0, b0);
+    const e0 = apply(c0, op2_0, d0);
+    const c1 = apply(a1, op1_1, b1);
+    const e1 = apply(c1, op2_1, d1);
+    if (!ok(c0, e0, c1, e1)) continue;
+
+    const a2 = apply(a0, opA, a1);
+    const c2 = apply(c0, opC, c1);
+    const e2 = apply(e0, opE, e1);
+    if (!ok(a2, c2, e2)) continue;
+
+    // ricava b2 e d2 dalla riga 2
+    const b2 = op1_2 === '+' ? c2 - a2 : a2 - c2;
+    const d2 = op2_2 === '+' ? e2 - c2 : c2 - e2;
+    if (!ok(b2, d2)) continue;
+
+    // verifica ridondante
+    if (apply(a2, op1_2, b2) !== c2) continue;
+    if (apply(c2, op2_2, d2) !== e2) continue;
+
+    // scegli 6 celle da nascondere (solo derivate → soluzione unica)
+    const derived = ['c0','e0','c1','e1','a2','b2','c2','d2','e2'];
+    derived.sort(() => Math.random() - 0.5);
+    const hidden = new Set(derived.slice(0, 6));
+
+    return {
+      v:  {a0,b0,c0,d0,e0, a1,b1,c1,d1,e1, a2,b2,c2,d2,e2},
+      op: {op1_0, op2_0, op1_1, op2_1, op1_2, op2_2, opA, opC, opE},
+      hidden
+    };
+  }
+  // fallback sicuro
+  return {
+    v:  {a0:8,b0:3,c0:11,d0:4,e0:15, a1:5,b1:2,c1:7,d1:6,e1:13, a2:3,b2:8,c2:4,d2:3,e2:2},
+    op: {op1_0:'+',op2_0:'+',op1_1:'+',op2_1:'+',op1_2:'-',op2_2:'-',opA:'-',opC:'-',opE:'-'},
+    hidden: new Set(['c0','e0','c1','e1','a2','c2'])
+  };
+}
+
+/* ── RENDERING ── */
+
+function makeNum(name) {
+  const div = document.createElement('div');
+  div.className = 'num-cell';
+  if (P.hidden.has(name)) {
+    div.classList.add('blank');
+    div.id = 'wrap_' + name;
+    const inp = document.createElement('input');
+    inp.type = 'number'; inp.inputMode = 'numeric';
+    inp.pattern = '[0-9]*'; inp.id = 'c_' + name;
+    inp.autocomplete = 'off'; inp.min = '1'; inp.max = '20';
+    inp.addEventListener('focus', clearFeedback);
+    div.appendChild(inp);
+  } else {
+    div.classList.add('given');
+    div.textContent = P.v[name];
+  }
+  return div;
+}
+
+function el(cls, text) {
+  const d = document.createElement('div');
+  d.className = cls; d.textContent = text || '';
+  return d;
+}
+
+function render() {
+  const g = document.getElementById('grid');
+  g.innerHTML = '';
+  const o = P.op;
+
+  // Riga 0
+  g.append(makeNum('a0'), el('op-h', o.op1_0), makeNum('b0'), el('eq-h','='),
+           makeNum('c0'), el('op-h', o.op2_0), makeNum('d0'), el('eq-h','='),
+           makeNum('e0'));
+  // Riga 1
+  g.append(el('op-v', o.opA), el('spc'), el('spc'), el('spc'),
+           el('op-v', o.opC), el('spc'), el('spc'), el('spc'),
+           el('op-v', o.opE));
+  // Riga 2
+  g.append(makeNum('a1'), el('op-h', o.op1_1), makeNum('b1'), el('eq-h','='),
+           makeNum('c1'), el('op-h', o.op2_1), makeNum('d1'), el('eq-h','='),
+           makeNum('e1'));
+  // Riga 3
+  g.append(el('eq-v','='), el('spc'), el('spc'), el('spc'),
+           el('eq-v','='), el('spc'), el('spc'), el('spc'),
+           el('eq-v','='));
+  // Riga 4
+  g.append(makeNum('a2'), el('op-h', o.op1_2), makeNum('b2'), el('eq-h','='),
+           makeNum('c2'), el('op-h', o.op2_2), makeNum('d2'), el('eq-h','='),
+           makeNum('e2'));
+}
+
+/* ── AZIONI ── */
+
+function getVal(name) {
+  if (P.hidden.has(name)) {
+    const v = parseInt(document.getElementById('c_' + name).value);
+    return isNaN(v) ? null : v;
+  }
+  return P.v[name];
+}
+
+function clearFeedback() {
+  const fb = document.getElementById('feedback');
+  fb.textContent = ''; fb.className = 'feedback';
+  P.hidden.forEach(n => {
+    const w = document.getElementById('wrap_' + n);
+    if (w) w.classList.remove('correct','wrong');
+  });
+}
+
+function verify() {
+  const fb = document.getElementById('feedback');
+  const names = ['a0','b0','c0','d0','e0','a1','b1','c1','d1','e1','a2','b2','c2','d2','e2'];
+  const v = {}; let allFilled = true;
+  names.forEach(n => { const val = getVal(n); if (val === null) allFilled = false; v[n] = val; });
+
+  if (!allFilled) {
+    fb.textContent = '⚠️ Riempi tutte le caselle blu!';
+    fb.className = 'feedback warn'; return;
+  }
+
+  const o = P.op;
+  const eqs = [
+    apply(v.a0, o.op1_0, v.b0) === v.c0,
+    apply(v.c0, o.op2_0, v.d0) === v.e0,
+    apply(v.a1, o.op1_1, v.b1) === v.c1,
+    apply(v.c1, o.op2_1, v.d1) === v.e1,
+    apply(v.a2, o.op1_2, v.b2) === v.c2,
+    apply(v.c2, o.op2_2, v.d2) === v.e2,
+    apply(v.a0, o.opA, v.a1)   === v.a2,
+    apply(v.c0, o.opC, v.c1)   === v.c2,
+    apply(v.e0, o.opE, v.e1)   === v.e2
+  ];
+
+  P.hidden.forEach(n => {
+    const w = document.getElementById('wrap_' + n);
+    w.classList.remove('correct','wrong');
+    w.classList.add(v[n] === P.v[n] ? 'correct' : 'wrong');
+  });
+
+  if (eqs.every(Boolean)) {
+    fb.textContent = '🎉 Perfetto! Tutte le equazioni sono corrette!';
+    fb.className = 'feedback ok';
+  } else {
+    const wrong = eqs.filter(x => !x).length;
+    fb.textContent = `❌ ${wrong} equazion${wrong===1?'e':'i'} errat${wrong===1?'a':'e'}. Riprova!`;
+    fb.className = 'feedback err';
+  }
+}
+
+function resetInputs() {
+  P.hidden.forEach(n => {
+    const inp = document.getElementById('c_' + n);
+    if (inp) inp.value = '';
+    const w = document.getElementById('wrap_' + n);
+    if (w) w.classList.remove('correct','wrong');
+  });
+  const fb = document.getElementById('feedback');
+  fb.textContent = ''; fb.className = 'feedback';
+}
+
+function newPuzzle() {
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('feedback').className = 'feedback';
+  P = generate(); render();
+}
+
+newPuzzle();
+</script>
+</body>
+</html>

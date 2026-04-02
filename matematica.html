@@ -458,12 +458,18 @@ function genOne(type) {
   }
 
   const nums = [0, 1, 2, 3, 4].map(i => start + i * step);
-  // 2 incognite random (consecutive o no)
+  // 1 o 2 incognite, mixate casualmente
+  const numBlanks = Math.random() < 0.5 ? 1 : 2;
   let i1 = Math.floor(Math.random() * 5);
-  let i2;
-  do { i2 = Math.floor(Math.random() * 5); } while (i2 === i1);
-  const blankIdxs = [i1, i2].sort((a, b) => a - b);
-  return { nums, answers: [nums[blankIdxs[0]], nums[blankIdxs[1]]], blankIdxs, step, subtype: type };
+  let blankIdxs;
+  if (numBlanks === 1) {
+    blankIdxs = [i1];
+  } else {
+    let i2;
+    do { i2 = Math.floor(Math.random() * 5); } while (i2 === i1);
+    blankIdxs = [i1, i2].sort((a, b) => a - b);
+  }
+  return { nums, answers: blankIdxs.map(i => nums[i]), blankIdxs, step, subtype: type };
 }
 
 function generateAll(type) {
@@ -522,9 +528,19 @@ function renderRows(type) {
         inp.addEventListener('keydown', e => {
           if (e.key === 'Enter') {
             if (pos === 0) {
-              // vai alla seconda incognita della stessa riga
+              // vai alla seconda incognita della stessa riga, se esiste
               const next = document.getElementById(`inp-${type}-${ri}-1`);
-              if (next) next.focus();
+              if (next) {
+                next.focus();
+              } else {
+                // riga con 1 sola incognita: vai alla riga successiva
+                if (ri < 4) {
+                  const nextRow = document.getElementById(`inp-${type}-${ri + 1}-0`);
+                  if (nextRow) nextRow.focus();
+                } else {
+                  verifyAll(type);
+                }
+              }
             } else {
               // seconda incognita: vai alla riga successiva o verifica
               if (ri < 4) {
@@ -577,18 +593,20 @@ function verifyAll(type) {
     const row  = document.getElementById(`row-${type}-${ri}`);
 
     const val0 = parseInt(inp0.value);
-    const val1 = parseInt(inp1.value);
+    const val1 = inp1 ? parseInt(inp1.value) : null;
 
     row.classList.remove('correct-row', 'wrong-row');
 
     const ok0 = !isNaN(val0) && val0 === ex.answers[0];
-    const ok1 = !isNaN(val1) && val1 === ex.answers[1];
+    const ok1 = inp1 ? (!isNaN(val1) && val1 === ex.answers[1]) : true;
 
     if (ok0) { inp0.setAttribute('readonly', true); inp0.className = 'seq-input ok'; }
     else     { inp0.removeAttribute('readonly');    inp0.className = 'seq-input err'; }
 
-    if (ok1) { inp1.setAttribute('readonly', true); inp1.className = 'seq-input ok'; }
-    else     { inp1.removeAttribute('readonly');    inp1.className = 'seq-input err'; }
+    if (inp1) {
+      if (ok1) { inp1.setAttribute('readonly', true); inp1.className = 'seq-input ok'; }
+      else     { inp1.removeAttribute('readonly');    inp1.className = 'seq-input err'; }
+    }
 
     if (ok0 && ok1) {
       fb.textContent = '✅';

@@ -487,15 +487,7 @@ function renderRows(type) {
     row.className = 'ex-row';
     row.id = `row-${type}-${ri}`;
 
-    // Badge tipo per sezione Mix
-    if (type === 'mix') {
-      const badge = document.createElement('span');
-      const abs = Math.abs(ex.step);
-      const sign = ex.step > 0 ? '+' : '−';
-      badge.className = 'step-badge ' + (abs === 2 ? 's2' : abs === 5 ? 's5' : 's10');
-      badge.textContent = sign + abs;
-      row.appendChild(badge);
-    }
+    // Badge tipo per sezione Mix — rimosso su richiesta
 
     ex.nums.forEach((n, i) => {
       if (i > 0) {

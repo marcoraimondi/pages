@@ -9,7 +9,7 @@
 
 body {
   font-family: 'Trebuchet MS', Arial, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #f48fb1 0%, #d81b60 100%);
   min-height: 100vh;
   padding: 14px 10px 40px;
 }
@@ -43,7 +43,7 @@ h1 {
 }
 .nav-btn.active {
   background: white;
-  color: #764ba2;
+  color: #d81b60;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
@@ -58,7 +58,7 @@ h1 {
 }
 .card h2 {
   text-align: center;
-  color: #764ba2;
+  color: #d81b60;
   margin-bottom: 14px;
   font-size: 18px;
 }
@@ -75,8 +75,8 @@ h1 {
   margin-bottom: 12px;
 }
 .score-badge {
-  background: #f3f0ff;
-  color: #764ba2;
+  background: #fce4ec;
+  color: #d81b60;
   font-weight: bold;
   padding: 4px 12px;
   border-radius: 50px;
@@ -138,7 +138,7 @@ h1 {
   -webkit-appearance: none;
   -moz-appearance: textfield;
 }
-.seq-input:focus { border-color: #764ba2; background: #f3f0ff; }
+.seq-input:focus { border-color: #d81b60; background: #fce4ec; }
 .seq-input.ok  { border-color: #2e7d32 !important; background: #e8f5e9 !important; color: #2e7d32; }
 .seq-input.err { border-color: #c62828 !important; background: #ffebee !important; color: #c62828; }
 input[type=number]::-webkit-inner-spin-button,
@@ -161,7 +161,7 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
   white-space: nowrap;
   letter-spacing: 0.3px;
 }
-.step-badge.s2  { background: #e8eaf6; color: #3949ab; border: 1.5px solid #c5cae9; }
+.step-badge.s2  { background: #fce4ec; color: #880e4f; border: 1.5px solid #f8bbd0; }
 .step-badge.s5  { background: #fce4ec; color: #c62828; border: 1.5px solid #f8bbd0; }
 .step-badge.s10 { background: #e8f5e9; color: #2e7d32; border: 1.5px solid #c8e6c9; }
 
@@ -172,7 +172,7 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
   font-weight: bold;
   min-height: 22px;
   margin-top: 10px;
-  color: #764ba2;
+  color: #d81b60;
 }
 
 /* ══ BOTTONI UNIFICATI ══ */
@@ -192,7 +192,7 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 
 /* Viola pieno — Verifica */
 .btn-primary {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #f48fb1, #d81b60);
   color: white;
   box-shadow: 0 3px 10px rgba(118,75,162,0.25);
 }
@@ -200,8 +200,8 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 
 /* Viola chiaro — Nuovo / Ricomincia */
 .btn-secondary {
-  background: #f3f0ff;
-  color: #764ba2;
+  background: #fce4ec;
+  color: #d81b60;
   border: 2px solid #ede7ff;
 }
 .btn-secondary:hover { background: #ede7ff; }
@@ -224,15 +224,15 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 .cruci-title {
   font-size: clamp(13px, 4vw, 19px);
   font-weight: 900;
-  color: #764ba2;
-  border: 3px solid #764ba2;
+  color: #d81b60;
+  border: 3px solid #d81b60;
   padding: 8px 16px;
   border-radius: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
   text-align: center;
   margin-bottom: 8px;
-  background: linear-gradient(135deg, #f3f0ff, #ede7ff);
+  background: linear-gradient(135deg, #fce4ec, #ede7ff);
 }
 .cruci-sub {
   font-size: 12px;
@@ -263,15 +263,15 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
   color: #333;
 }
 .c-blank {
-  background: #f3f0ff !important;
-  border-color: #764ba2 !important;
+  background: #fce4ec !important;
+  border-color: #d81b60 !important;
 }
 .c-blank input {
   width: 100%; height: 100%;
   border: none; border-radius: 6px;
   text-align: center;
   font-size: 17px; font-weight: 900;
-  color: #764ba2;
+  color: #d81b60;
   background: transparent;
   outline: none; padding: 0;
   font-family: inherit;
@@ -280,9 +280,9 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 .c-num.c-correct input { color: #2e7d32; }
 .c-num.c-wrong   { border-color: #c62828 !important; background: #ffebee !important; }
 .c-num.c-wrong   input { color: #c62828; }
-.c-oph { width:22px; height:44px; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:800; color:#764ba2; }
+.c-oph { width:22px; height:44px; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:800; color:#d81b60; }
 .c-eqh { width:22px; height:44px; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:700; color:#555; }
-.c-opv { width:44px; height:22px; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:800; color:#764ba2; }
+.c-opv { width:44px; height:22px; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:800; color:#d81b60; }
 .c-eqv { width:44px; height:22px; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:700; color:#555; }
 .c-spc { width:22px; height:22px; }
 .cruci-btns {

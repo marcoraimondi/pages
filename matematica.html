@@ -536,6 +536,15 @@ function renderRows(type) {
             }
           }
         });
+        inp.addEventListener('input', () => {
+          if (inp.classList.contains('err')) {
+            inp.className = 'seq-input';
+            const rfb = document.getElementById(`rfb-${type}-${ri}`);
+            if (rfb) rfb.textContent = '';
+            const rowEl = document.getElementById(`row-${type}-${ri}`);
+            if (rowEl) rowEl.classList.remove('wrong-row');
+          }
+        });
         row.appendChild(inp);
       } else {
         const box = document.createElement('div');
@@ -569,16 +578,17 @@ function verifyAll(type) {
 
     const val0 = parseInt(inp0.value);
     const val1 = parseInt(inp1.value);
-    inp0.setAttribute('readonly', true);
-    inp1.setAttribute('readonly', true);
 
     row.classList.remove('correct-row', 'wrong-row');
 
     const ok0 = !isNaN(val0) && val0 === ex.answers[0];
     const ok1 = !isNaN(val1) && val1 === ex.answers[1];
 
-    inp0.className = 'seq-input ' + (ok0 ? 'ok' : 'err');
-    inp1.className = 'seq-input ' + (ok1 ? 'ok' : 'err');
+    if (ok0) { inp0.setAttribute('readonly', true); inp0.className = 'seq-input ok'; }
+    else     { inp0.removeAttribute('readonly');    inp0.className = 'seq-input err'; }
+
+    if (ok1) { inp1.setAttribute('readonly', true); inp1.className = 'seq-input ok'; }
+    else     { inp1.removeAttribute('readonly');    inp1.className = 'seq-input err'; }
 
     if (ok0 && ok1) {
       fb.textContent = '✅';

@@ -316,7 +316,7 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
       <div class="cruci-grid-wrap">
         <div class="cruci-grid" id="cgrid"></div>
       </div>
-      <div class="cruci-btns">
+      <div class="bottom-bar">
         <button class="btn btn-primary"   onclick="cVerify()">✓ Verifica</button>
         <button class="btn btn-secondary" onclick="cReset()">↺ Ricomincia</button>
         <button class="btn btn-secondary" onclick="cNew()">＋ Nuovo</button>
@@ -338,7 +338,8 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
     <div class="verify-feedback" id="vfb-plus2"></div>
     <div class="bottom-bar">
       <button class="btn btn-primary verify-btn" onclick="verifyAll('plus2')">✓ Verifica</button>
-      <button class="btn btn-secondary new-btn" onclick="generateAll('plus2')">🔄 Nuovo</button>
+      <button class="btn btn-secondary" onclick="resetAll('plus2')">↺ Ricomincia</button>
+      <button class="btn btn-secondary new-btn" onclick="generateAll('plus2')">＋ Nuovo</button>
     </div>
   </div>
 </div>
@@ -355,7 +356,8 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
     <div class="verify-feedback" id="vfb-plus5"></div>
     <div class="bottom-bar">
       <button class="btn btn-primary verify-btn" onclick="verifyAll('plus5')">✓ Verifica</button>
-      <button class="btn btn-secondary new-btn" onclick="generateAll('plus5')">🔄 Nuovo</button>
+      <button class="btn btn-secondary" onclick="resetAll('plus5')">↺ Ricomincia</button>
+      <button class="btn btn-secondary new-btn" onclick="generateAll('plus5')">＋ Nuovo</button>
     </div>
   </div>
 </div>
@@ -372,7 +374,8 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
     <div class="verify-feedback" id="vfb-tens"></div>
     <div class="bottom-bar">
       <button class="btn btn-primary verify-btn" onclick="verifyAll('tens')">✓ Verifica</button>
-      <button class="btn btn-secondary new-btn" onclick="generateAll('tens')">🔄 Nuovo</button>
+      <button class="btn btn-secondary" onclick="resetAll('tens')">↺ Ricomincia</button>
+      <button class="btn btn-secondary new-btn" onclick="generateAll('tens')">＋ Nuovo</button>
     </div>
   </div>
 </div>
@@ -389,7 +392,8 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
     <div class="verify-feedback" id="vfb-mix"></div>
     <div class="bottom-bar">
       <button class="btn btn-primary verify-btn" onclick="verifyAll('mix')">✓ Verifica</button>
-      <button class="btn btn-secondary new-btn" onclick="generateAll('mix')">🔄 Nuovo</button>
+      <button class="btn btn-secondary" onclick="resetAll('mix')">↺ Ricomincia</button>
+      <button class="btn btn-secondary new-btn" onclick="generateAll('mix')">＋ Nuovo</button>
     </div>
   </div>
 </div>
@@ -455,6 +459,18 @@ function generateAll(type) {
   updateScore(type);
   document.getElementById('vfb-' + type).textContent = '';
   renderRows(type);
+}
+
+function resetAll(type) {
+  for (let i = 0; i < 5; i++) {
+    const inp = document.getElementById(`inp-${type}-${i}`);
+    if (inp) { inp.value = ''; inp.className = 'seq-input'; }
+    const rfb = document.getElementById(`rfb-${type}-${i}`);
+    if (rfb) rfb.textContent = '';
+  }
+  document.getElementById('vfb-' + type).textContent = '';
+  const first = document.getElementById(`inp-${type}-0`);
+  if (first) first.focus();
 }
 
 function renderRows(type) {

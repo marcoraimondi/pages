@@ -3,13 +3,16 @@
 <head>
 <meta charset="UTF-8"><!-- v2.1 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <title>Matematica 1C</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Trebuchet MS', Arial, sans-serif;
-  background: linear-gradient(135deg, #f48fb1 0%, #d81b60 100%);
+  font-family: 'Nunito', 'Trebuchet MS', Arial, sans-serif;
+  background: linear-gradient(160deg, #fbc2eb 0%, #d81b60 100%);
   min-height: 100vh;
   padding: 14px 10px 40px;
 }
@@ -17,9 +20,11 @@ body {
 h1 {
   text-align: center;
   color: white;
-  font-size: 20px;
-  margin-bottom: 12px;
+  font-size: 22px;
+  font-weight: 900;
+  margin-bottom: 4px;
   text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  letter-spacing: 0.5px;
 }
 
 /* ── NAV ── */
@@ -36,8 +41,9 @@ h1 {
   border: none;
   cursor: pointer;
   font-size: 13px;
-  font-weight: bold;
-  background: rgba(255,255,255,0.2);
+  font-weight: 800;
+  font-family: inherit;
+  background: rgba(255,255,255,0.25);
   color: white;
   transition: all 0.2s;
 }
@@ -50,17 +56,19 @@ h1 {
 /* ── CARD ── */
 .card {
   background: white;
-  border-radius: 20px;
+  border-radius: 24px;
   padding: 18px 14px;
   max-width: 520px;
   margin: 0 auto;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  box-shadow: 0 20px 60px rgba(216,27,96,0.2);
+  border-top: 4px solid #f48fb1;
 }
 .card h2 {
   text-align: center;
   color: #d81b60;
   margin-bottom: 14px;
   font-size: 18px;
+  font-weight: 900;
 }
 
 /* ── SECTIONS ── */
@@ -77,14 +85,15 @@ h1 {
 .score-badge {
   background: #fce4ec;
   color: #d81b60;
-  font-weight: bold;
+  font-weight: 800;
   padding: 4px 12px;
   border-radius: 50px;
   font-size: 13px;
 }
 .streak-badge {
-  color: #888;
+  color: #c2185b;
   font-size: 13px;
+  font-weight: 700;
 }
 
 /* ── EXERCISE ROWS ── */
@@ -106,33 +115,34 @@ h1 {
 .seq-num {
   width: 36px;
   height: 36px;
-  border-radius: 8px;
-  background: #f0f0ff;
-  border: 1.5px solid #dce0ff;
+  border-radius: 10px;
+  background: #fce4ec;
+  border: 1.5px solid #f8bbd0;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 15px;
-  font-weight: bold;
-  color: #333;
+  font-weight: 800;
+  color: #c2185b;
   flex-shrink: 0;
 }
 .seq-arrow {
   font-size: 13px;
-  color: #bbb;
+  color: #f48fb1;
   flex-shrink: 0;
 }
 .seq-input {
   width: 42px;
   height: 36px;
-  border-radius: 8px;
-  border: 2px dashed #ffa000;
-  background: #fff8e1;
+  border-radius: 10px;
+  border: 2px dashed #f48fb1;
+  background: #fff0f7;
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 800;
+  font-family: inherit;
   text-align: center;
   outline: none;
-  color: #333;
+  color: #d81b60;
   flex-shrink: 0;
   transition: all 0.2s;
   -webkit-appearance: none;
@@ -179,10 +189,11 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 .btn {
   flex: 1;
   height: 44px;
-  border-radius: 12px;
+  border-radius: 14px;
   border: none;
   font-size: 14px;
   font-weight: 800;
+  font-family: inherit;
   cursor: pointer;
   transition: opacity 0.18s, background 0.18s;
   letter-spacing: 0.3px;
@@ -190,21 +201,21 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 }
 .btn:active { opacity: 0.82; }
 
-/* Viola pieno — Verifica */
+/* Bottone principale — Verifica */
 .btn-primary {
   background: linear-gradient(135deg, #f48fb1, #d81b60);
   color: white;
-  box-shadow: 0 3px 10px rgba(118,75,162,0.25);
+  box-shadow: 0 3px 10px rgba(216,27,96,0.3);
 }
 .btn-primary:hover { opacity: 0.93; }
 
-/* Viola chiaro — Nuovo / Ricomincia */
+/* Rosa chiaro — Nuovo / Ricomincia */
 .btn-secondary {
   background: #fce4ec;
   color: #d81b60;
-  border: 2px solid #ede7ff;
+  border: 2px solid #f8bbd0;
 }
-.btn-secondary:hover { background: #ede7ff; }
+.btn-secondary:hover { background: #f8bbd0; }
 
 /* ── BOTTOM BAR ── */
 .bottom-bar {
@@ -232,7 +243,7 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
   text-transform: uppercase;
   text-align: center;
   margin-bottom: 8px;
-  background: linear-gradient(135deg, #fce4ec, #ede7ff);
+  background: linear-gradient(135deg, #fce4ec, #f8bbd0);
 }
 .cruci-sub {
   font-size: 12px;
@@ -300,15 +311,15 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 </head>
 <body>
 
-<h1>Matematica 1C</h1>
-<p style="text-align:center;color:rgba(255,255,255,0.85);font-size:14px;margin-top:-8px;margin-bottom:12px;font-weight:500;letter-spacing:0.3px;">Esercizi per Giorgia ✨</p>
+<h1>🌸 Matematica 1C</h1>
+<p style="text-align:center;color:rgba(255,255,255,0.9);font-size:14px;margin-top:-4px;margin-bottom:14px;font-weight:700;letter-spacing:0.3px;">💕 Esercizi per Giorgia 💕</p>
 
 <nav class="nav">
   <button class="nav-btn active" onclick="showSection('cross',this)">✏️ Cruciverba</button>
-  <button class="nav-btn" onclick="showSection('plus2',this)">+2 / −2</button>
-  <button class="nav-btn" onclick="showSection('plus5',this)">+5 / −5</button>
-  <button class="nav-btn" onclick="showSection('tens',this)">Decine</button>
-  <button class="nav-btn" onclick="showSection('mix',this)">🎯 Mix</button>
+  <button class="nav-btn" onclick="showSection('plus2',this)">🌸 +2 / −2</button>
+  <button class="nav-btn" onclick="showSection('plus5',this)">🦋 +5 / −5</button>
+  <button class="nav-btn" onclick="showSection('tens',this)">💫 Decine</button>
+  <button class="nav-btn" onclick="showSection('mix',this)">🎀 Mix</button>
 </nav>
 
 <!-- ── CRUCIVERBA ── -->
@@ -317,17 +328,17 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
     <div class="cruci-wrap">
       <h2>✏️ Cruciverba</h2>
       <div class="score-bar" style="margin-bottom:10px">
-        <span class="streak-badge" id="streak-cross">🔥 Serie: 0</span>
+        <span class="streak-badge" id="streak-cross">🌟 Serie: 0</span>
       </div>
-      <p class="cruci-sub">Completa le caselle viola. Le equazioni devono tornare sia → che ↓</p>
+      <p class="cruci-sub">Completa le caselle rosa 🌸 Le equazioni devono tornare sia → che ↓</p>
       <div class="cruci-grid-wrap">
         <div class="cruci-grid" id="cgrid"></div>
       </div>
       <div class="verify-feedback" id="vfb-cross"></div>
       <div class="bottom-bar">
-        <button class="btn btn-primary"   onclick="cVerify()">✓ Verifica</button>
-        <button class="btn btn-secondary" onclick="cReset()">↺ Ricomincia</button>
-        <button class="btn btn-secondary" onclick="cNew()">＋ Nuovo</button>
+        <button class="btn btn-primary"   onclick="cVerify()">💖 Verifica</button>
+        <button class="btn btn-secondary" onclick="cReset()">🔄 Ricomincia</button>
+        <button class="btn btn-secondary" onclick="cNew()">✨ Nuovo</button>
       </div>
       <div class="cruci-feedback" id="cfeedback"></div>
     </div>
@@ -337,17 +348,17 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 <!-- ── +2/−2 ── -->
 <div id="section-plus2" class="section">
   <div class="card">
-    <h2>Contare di 2 in 2</h2>
+    <h2>🌸 Contare di 2 in 2</h2>
     <div class="score-bar">
-      <span class="streak-badge" id="streak-plus2">🔥 Serie: 0</span>
-      <span class="score-badge" id="score-plus2">⭐ 0 / 5</span>
+      <span class="streak-badge" id="streak-plus2">🌟 Serie: 0</span>
+      <span class="score-badge" id="score-plus2">🌸 0 / 5</span>
     </div>
     <div id="rows-plus2"></div>
     <div class="verify-feedback" id="vfb-plus2"></div>
     <div class="bottom-bar">
-      <button class="btn btn-primary verify-btn" onclick="verifyAll('plus2')">✓ Verifica</button>
-      <button class="btn btn-secondary" onclick="resetAll('plus2')">↺ Ricomincia</button>
-      <button class="btn btn-secondary new-btn" onclick="generateAll('plus2')">＋ Nuovo</button>
+      <button class="btn btn-primary verify-btn" onclick="verifyAll('plus2')">💖 Verifica</button>
+      <button class="btn btn-secondary" onclick="resetAll('plus2')">🔄 Ricomincia</button>
+      <button class="btn btn-secondary new-btn" onclick="generateAll('plus2')">✨ Nuovo</button>
     </div>
   </div>
 </div>
@@ -355,17 +366,17 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 <!-- ── +5/−5 ── -->
 <div id="section-plus5" class="section">
   <div class="card">
-    <h2>Contare di 5 in 5</h2>
+    <h2>🦋 Contare di 5 in 5</h2>
     <div class="score-bar">
-      <span class="streak-badge" id="streak-plus5">🔥 Serie: 0</span>
-      <span class="score-badge" id="score-plus5">⭐ 0 / 5</span>
+      <span class="streak-badge" id="streak-plus5">🌟 Serie: 0</span>
+      <span class="score-badge" id="score-plus5">🌸 0 / 5</span>
     </div>
     <div id="rows-plus5"></div>
     <div class="verify-feedback" id="vfb-plus5"></div>
     <div class="bottom-bar">
-      <button class="btn btn-primary verify-btn" onclick="verifyAll('plus5')">✓ Verifica</button>
-      <button class="btn btn-secondary" onclick="resetAll('plus5')">↺ Ricomincia</button>
-      <button class="btn btn-secondary new-btn" onclick="generateAll('plus5')">＋ Nuovo</button>
+      <button class="btn btn-primary verify-btn" onclick="verifyAll('plus5')">💖 Verifica</button>
+      <button class="btn btn-secondary" onclick="resetAll('plus5')">🔄 Ricomincia</button>
+      <button class="btn btn-secondary new-btn" onclick="generateAll('plus5')">✨ Nuovo</button>
     </div>
   </div>
 </div>
@@ -373,17 +384,17 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 <!-- ── DECINE ── -->
 <div id="section-tens" class="section">
   <div class="card">
-    <h2>Contare di 10 in 10</h2>
+    <h2>💫 Contare di 10 in 10</h2>
     <div class="score-bar">
-      <span class="streak-badge" id="streak-tens">🔥 Serie: 0</span>
-      <span class="score-badge" id="score-tens">⭐ 0 / 5</span>
+      <span class="streak-badge" id="streak-tens">🌟 Serie: 0</span>
+      <span class="score-badge" id="score-tens">🌸 0 / 5</span>
     </div>
     <div id="rows-tens"></div>
     <div class="verify-feedback" id="vfb-tens"></div>
     <div class="bottom-bar">
-      <button class="btn btn-primary verify-btn" onclick="verifyAll('tens')">✓ Verifica</button>
-      <button class="btn btn-secondary" onclick="resetAll('tens')">↺ Ricomincia</button>
-      <button class="btn btn-secondary new-btn" onclick="generateAll('tens')">＋ Nuovo</button>
+      <button class="btn btn-primary verify-btn" onclick="verifyAll('tens')">💖 Verifica</button>
+      <button class="btn btn-secondary" onclick="resetAll('tens')">🔄 Ricomincia</button>
+      <button class="btn btn-secondary new-btn" onclick="generateAll('tens')">✨ Nuovo</button>
     </div>
   </div>
 </div>
@@ -391,17 +402,17 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 <!-- ── MIX ── -->
 <div id="section-mix" class="section">
   <div class="card">
-    <h2>🎯 Mix — Tutte le Serie</h2>
+    <h2>🎀 Mix — Tutte le Serie</h2>
     <div class="score-bar">
-      <span class="streak-badge" id="streak-mix">🔥 Serie: 0</span>
-      <span class="score-badge" id="score-mix">⭐ 0 / 5</span>
+      <span class="streak-badge" id="streak-mix">🌟 Serie: 0</span>
+      <span class="score-badge" id="score-mix">🌸 0 / 5</span>
     </div>
     <div id="rows-mix"></div>
     <div class="verify-feedback" id="vfb-mix"></div>
     <div class="bottom-bar">
-      <button class="btn btn-primary verify-btn" onclick="verifyAll('mix')">✓ Verifica</button>
-      <button class="btn btn-secondary" onclick="resetAll('mix')">↺ Ricomincia</button>
-      <button class="btn btn-secondary new-btn" onclick="generateAll('mix')">＋ Nuovo</button>
+      <button class="btn btn-primary verify-btn" onclick="verifyAll('mix')">💖 Verifica</button>
+      <button class="btn btn-secondary" onclick="resetAll('mix')">🔄 Ricomincia</button>
+      <button class="btn btn-secondary new-btn" onclick="generateAll('mix')">✨ Nuovo</button>
     </div>
   </div>
 </div>
@@ -626,21 +637,21 @@ function verifyAll(type) {
 
   const vfb = document.getElementById('vfb-' + type);
   if (correct === 5) {
-    vfb.textContent = '🎉 Perfetto! Tutti e 5 corretti!';
+    vfb.textContent = '🌟 Bravissima Giorgia! Tutti e 5 giusti! 🌸';
     vfb.style.color = '#2e7d32';
   } else if (correct === 0) {
-    vfb.textContent = '😅 Nessuno giusto, riprova!';
+    vfb.textContent = '💪 Nessuno giusto ancora, riprova! 🌸';
     vfb.style.color = '#c62828';
   } else {
-    vfb.textContent = `🙂 ${correct} su 5 corretti!`;
+    vfb.textContent = `💖 ${correct} su 5 giusti, continua così!`;
     vfb.style.color = correct >= 3 ? '#2e7d32' : '#e65100';
   }
 }
 
 function updateScore(type) {
   const s = exState[type];
-  document.getElementById(`score-${type}`).textContent  = `⭐ ${s.solved} / 5`;
-  document.getElementById(`streak-${type}`).textContent = `🔥 Serie: ${globalStreak}`;
+  document.getElementById(`score-${type}`).textContent  = `🌸 ${s.solved} / 5`;
+  document.getElementById(`streak-${type}`).textContent = `🌟 Serie: ${globalStreak}`;
 }
 
 /* ════════════════════════════
@@ -652,7 +663,7 @@ function addStreak() {
   globalStreak++;
   ['plus2','plus5','tens','mix','cross'].forEach(id => {
     const el = document.getElementById('streak-' + id);
-    if (el) el.textContent = '🔥 Serie: ' + globalStreak;
+    if (el) el.textContent = '🌟 Serie: ' + globalStreak;
   });
 }
 
@@ -768,7 +779,7 @@ function cVerify() {
   });
   if (eqs.every(Boolean)){
     addStreak();
-    fb.textContent='🎉 Perfetto! Tutte le equazioni sono corrette!';fb.className='cruci-feedback ok';
+    fb.textContent='🌟 Bravissima! Cruciverba perfetto! 🎀';fb.className='cruci-feedback ok';
   } else {
     const wr=eqs.filter(x=>!x).length;
     fb.textContent=`❌ ${wr} equazion${wr===1?'e':'i'} errat${wr===1?'a':'e'}. Riprova!`;

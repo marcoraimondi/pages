@@ -6,35 +6,36 @@
 <title>Matematica Divertente 🌟</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
   font-family: 'Trebuchet MS', Arial, sans-serif;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
-  padding: 16px 12px 40px;
+  padding: 14px 10px 40px;
 }
 
 h1 {
   text-align: center;
   color: white;
-  font-size: 22px;
-  margin-bottom: 14px;
+  font-size: 20px;
+  margin-bottom: 12px;
   text-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
-/* Top nav */
+/* ── NAV ── */
 .nav {
   display: flex;
-  gap: 8px;
+  gap: 7px;
   flex-wrap: wrap;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   justify-content: center;
 }
 .nav-btn {
-  padding: 9px 16px;
+  padding: 9px 15px;
   border-radius: 50px;
   border: none;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: bold;
   background: rgba(255,255,255,0.2);
   color: white;
@@ -46,176 +47,32 @@ h1 {
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-/* Card */
+/* ── CARD ── */
 .card {
   background: white;
   border-radius: 20px;
-  padding: 22px 18px;
-  max-width: 500px;
+  padding: 18px 14px;
+  max-width: 520px;
   margin: 0 auto;
   box-shadow: 0 20px 60px rgba(0,0,0,0.2);
 }
-
 .card h2 {
   text-align: center;
   color: #764ba2;
   margin-bottom: 14px;
-  font-size: 20px;
-}
-
-/* Mode toggle */
-.mode-toggle {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 20px;
-  background: #f0f0f0;
-  border-radius: 50px;
-  padding: 4px;
-}
-.mode-btn {
-  flex: 1;
-  padding: 8px;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  background: transparent;
-  color: #888;
-  transition: all 0.2s;
-}
-.mode-btn.active {
-  background: white;
-  color: #764ba2;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-}
-
-/* Sequence */
-.sequence {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin: 18px 0;
-}
-.num-box {
-  width: 54px;
-  height: 54px;
-  border-radius: 12px;
-  background: #f0f0ff;
-  color: #333;
-  font-size: 20px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #dce0ff;
-}
-.num-box.blank {
-  background: #fff8e1;
-  border: 2px dashed #ffa000;
-  color: #ffa000;
-  font-size: 26px;
-}
-.arrow {
   font-size: 18px;
-  color: #bbb;
 }
 
-/* Answer row */
-.answer-row {
-  display: flex;
-  gap: 10px;
-  margin: 16px 0 10px;
-}
-.answer-input {
-  flex: 1;
-  height: 54px;
-  border-radius: 12px;
-  border: 2px solid #ddd;
-  font-size: 24px;
-  font-weight: bold;
-  text-align: center;
-  outline: none;
-  transition: border 0.2s;
-  color: #333;
-}
-.answer-input:focus { border-color: #764ba2; }
-.answer-input.ok { border-color: #2e7d32 !important; background: #f1f8e9; }
-.answer-input.err { border-color: #c62828 !important; background: #ffebee; }
-
-.check-btn {
-  height: 54px;
-  padding: 0 20px;
-  border-radius: 12px;
-  border: none;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-  font-size: 20px;
-  cursor: pointer;
-  transition: transform 0.1s;
-}
-.check-btn:active { transform: scale(0.94); }
-
-/* Feedback */
-.feedback {
-  text-align: center;
-  font-size: 20px;
-  font-weight: bold;
-  min-height: 32px;
-  margin-bottom: 6px;
-}
-.feedback.correct { color: #2e7d32; }
-.feedback.wrong { color: #c62828; }
-
-/* New button */
-.new-btn {
-  width: 100%;
-  height: 46px;
-  border-radius: 12px;
-  border: 2px solid #ede7ff;
-  background: #f3f0ff;
-  color: #764ba2;
-  font-size: 15px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 6px;
-  transition: background 0.2s;
-}
-.new-btn:hover { background: #ede7ff; }
-
-/* Cruciverba link card */
-.link-card {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  padding: 28px 20px;
-  background: linear-gradient(135deg, #fff8e1, #ffecb3);
-  border-radius: 16px;
-  text-decoration: none;
-  color: #5d4037;
-  font-size: 18px;
-  font-weight: bold;
-  border: 2px solid #ffe082;
-  transition: all 0.2s;
-}
-.link-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
-.link-card span { font-size: 36px; }
-
-/* Sections */
+/* ── SECTIONS ── */
 .section { display: none; }
 .section.active { display: block; }
 
-/* Score badge */
+/* ── SCORE BAR ── */
 .score-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 14px;
-  font-size: 13px;
-  color: #888;
+  margin-bottom: 12px;
 }
 .score-badge {
   background: #f3f0ff;
@@ -225,6 +82,186 @@ h1 {
   border-radius: 50px;
   font-size: 13px;
 }
+.streak-badge {
+  color: #888;
+  font-size: 13px;
+}
+
+/* ── EXERCISE ROWS ── */
+.ex-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: #fafafa;
+  border: 2px solid #eee;
+  transition: border-color 0.2s;
+}
+.ex-row.correct-row { border-color: #a5d6a7; background: #f1f8e9; }
+.ex-row.wrong-row   { border-color: #ef9a9a; background: #ffebee; }
+
+.seq-num {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #f0f0ff;
+  border: 1.5px solid #dce0ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: bold;
+  color: #333;
+  flex-shrink: 0;
+}
+.seq-arrow {
+  font-size: 13px;
+  color: #bbb;
+  flex-shrink: 0;
+}
+.seq-input {
+  width: 42px;
+  height: 36px;
+  border-radius: 8px;
+  border: 2px dashed #ffa000;
+  background: #fff8e1;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  outline: none;
+  color: #333;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+.seq-input:focus { border-color: #764ba2; background: #f3f0ff; }
+.seq-input.ok  { border-color: #2e7d32 !important; background: #e8f5e9 !important; color: #2e7d32; }
+.seq-input.err { border-color: #c62828 !important; background: #ffebee !important; color: #c62828; }
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+.row-feedback {
+  margin-left: auto;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+/* ── BOTTOM BUTTONS ── */
+.bottom-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+.new-btn {
+  flex: 1;
+  height: 44px;
+  border-radius: 12px;
+  border: 2px solid #ede7ff;
+  background: #f3f0ff;
+  color: #764ba2;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.new-btn:hover { background: #ede7ff; }
+
+/* ── CRUCIVERBA SECTION ── */
+#section-cross .card {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* ══ CRUCIVERBA EMBEDDED STYLES ══ */
+.cruci-wrap {
+  padding: 18px 12px 20px;
+}
+.cruci-title {
+  font-size: clamp(13px, 4vw, 19px);
+  font-weight: 900;
+  color: #e05a00;
+  border: 3px solid #e05a00;
+  padding: 8px 16px;
+  border-radius: 6px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 8px;
+}
+.cruci-sub {
+  font-size: 12px;
+  color: #888;
+  text-align: center;
+  margin-bottom: 14px;
+}
+.cruci-grid-wrap {
+  overflow-x: auto;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+.cruci-grid {
+  display: grid;
+  grid-template-columns: repeat(9, auto);
+  gap: 4px;
+  align-items: center;
+  justify-items: center;
+}
+.c-num {
+  width: 44px; height: 44px;
+  border: 2.5px solid #333;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; font-weight: 900;
+  background: white;
+  color: #111;
+}
+.c-blank {
+  background: #e8f4fd !important;
+  border-color: #1565c0 !important;
+}
+.c-blank input {
+  width: 100%; height: 100%;
+  border: none; border-radius: 6px;
+  text-align: center;
+  font-size: 17px; font-weight: 900;
+  color: #1565c0;
+  background: transparent;
+  outline: none; padding: 0;
+  font-family: inherit;
+}
+.c-num.c-correct { border-color: #2e7d32 !important; background: #e8f5e9 !important; }
+.c-num.c-correct input { color: #2e7d32; }
+.c-num.c-wrong   { border-color: #c62828 !important; background: #ffebee !important; }
+.c-num.c-wrong   input { color: #c62828; }
+@keyframes shake { 0%,100%{ transform:translateX(0) } 25%{ transform:translateX(-5px) } 75%{ transform:translateX(5px) } }
+.c-oph { width:22px; height:44px; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:800; color:#e05a00; }
+.c-eqh { width:22px; height:44px; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:700; color:#555; }
+.c-opv { width:44px; height:22px; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:800; color:#e05a00; }
+.c-eqv { width:44px; height:22px; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:700; color:#555; }
+.c-spc { width:22px; height:22px; }
+.cruci-btns {
+  display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+  margin-bottom: 10px;
+}
+.c-btn {
+  padding: 10px 18px; font-size: 14px; font-weight: 800;
+  border: none; border-radius: 10px; cursor: pointer;
+}
+.c-btn-verify { background: #e05a00; color: white; }
+.c-btn-reset  { background: #607d8b; color: white; }
+.c-btn-new    { background: #222; color: white; }
+.cruci-feedback {
+  font-size: 15px; font-weight: 700;
+  min-height: 24px; text-align: center;
+}
+.cruci-feedback.ok  { color: #2e7d32; }
+.cruci-feedback.err { color: #c62828; }
+.cruci-feedback.warn{ color: #e65100; }
 </style>
 </head>
 <body>
@@ -232,99 +269,80 @@ h1 {
 <h1>🌟 Matematica Divertente</h1>
 
 <nav class="nav">
-  <button class="nav-btn" onclick="showSection('cross', this)">✏️ Cruciverba</button>
-  <button class="nav-btn active" onclick="showSection('plus2', this)">+2 / −2</button>
-  <button class="nav-btn" onclick="showSection('plus5', this)">+5 / −5</button>
-  <button class="nav-btn" onclick="showSection('tens', this)">Decine</button>
+  <button class="nav-btn" onclick="showSection('cross',this)">✏️ Cruciverba</button>
+  <button class="nav-btn active" onclick="showSection('plus2',this)">+2 / −2</button>
+  <button class="nav-btn" onclick="showSection('plus5',this)">+5 / −5</button>
+  <button class="nav-btn" onclick="showSection('tens',this)">Decine</button>
 </nav>
 
-<!-- Cruciverba -->
+<!-- ── CRUCIVERBA ── -->
 <div id="section-cross" class="section">
   <div class="card">
-    <h2>✏️ Cruciverba</h2>
-    <a href="cruciverba.html" class="link-card">
-      <span>✏️</span>
-      Vai al Cruciverba Matematico →
-    </a>
+    <div class="cruci-wrap">
+      <div class="cruci-title">Cruciverba Matematici</div>
+      <p class="cruci-sub">Completa le caselle blu. Le equazioni devono tornare sia → che ↓</p>
+      <div class="cruci-grid-wrap">
+        <div class="cruci-grid" id="cgrid"></div>
+      </div>
+      <div class="cruci-btns">
+        <button class="c-btn c-btn-verify" onclick="cVerify()">✓ Verifica</button>
+        <button class="c-btn c-btn-reset"  onclick="cReset()">↺ Ricomincia</button>
+        <button class="c-btn c-btn-new"    onclick="cNew()">＋ Nuovo</button>
+      </div>
+      <div class="cruci-feedback" id="cfeedback"></div>
+    </div>
   </div>
 </div>
 
-<!-- +2 / -2 -->
+<!-- ── +2/−2 ── -->
 <div id="section-plus2" class="section active">
   <div class="card">
     <h2>Contare di 2 in 2</h2>
-    <div class="mode-toggle">
-      <button class="mode-btn active" id="p2-add" onclick="setMode('plus2','add')">➕ Addizione</button>
-      <button class="mode-btn" id="p2-sub" onclick="setMode('plus2','sub')">➖ Sottrazione</button>
-    </div>
     <div class="score-bar">
-      <span id="streak-plus2">🔥 Serie: 0</span>
-      <span class="score-badge" id="score-plus2">⭐ 0 punti</span>
+      <span class="streak-badge" id="streak-plus2">🔥 Serie: 0</span>
+      <span class="score-badge" id="score-plus2">⭐ 0 / 5</span>
     </div>
-    <div id="seq-plus2" class="sequence"></div>
-    <div class="answer-row">
-      <input type="number" id="inp-plus2" class="answer-input" placeholder="?"
-             onkeydown="if(event.key==='Enter') check('plus2')">
-      <button class="check-btn" onclick="check('plus2')">✓</button>
+    <div id="rows-plus2"></div>
+    <div class="bottom-bar">
+      <button class="new-btn" onclick="generateAll('plus2')">🔄 Nuovi esercizi</button>
     </div>
-    <div id="fb-plus2" class="feedback"></div>
-    <button class="new-btn" onclick="generate('plus2')">🔄 Nuovo esercizio</button>
   </div>
 </div>
 
-<!-- +5 / -5 -->
+<!-- ── +5/−5 ── -->
 <div id="section-plus5" class="section">
   <div class="card">
     <h2>Contare di 5 in 5</h2>
-    <div class="mode-toggle">
-      <button class="mode-btn active" id="p5-add" onclick="setMode('plus5','add')">➕ Addizione</button>
-      <button class="mode-btn" id="p5-sub" onclick="setMode('plus5','sub')">➖ Sottrazione</button>
-    </div>
     <div class="score-bar">
-      <span id="streak-plus5">🔥 Serie: 0</span>
-      <span class="score-badge" id="score-plus5">⭐ 0 punti</span>
+      <span class="streak-badge" id="streak-plus5">🔥 Serie: 0</span>
+      <span class="score-badge" id="score-plus5">⭐ 0 / 5</span>
     </div>
-    <div id="seq-plus5" class="sequence"></div>
-    <div class="answer-row">
-      <input type="number" id="inp-plus5" class="answer-input" placeholder="?"
-             onkeydown="if(event.key==='Enter') check('plus5')">
-      <button class="check-btn" onclick="check('plus5')">✓</button>
+    <div id="rows-plus5"></div>
+    <div class="bottom-bar">
+      <button class="new-btn" onclick="generateAll('plus5')">🔄 Nuovi esercizi</button>
     </div>
-    <div id="fb-plus5" class="feedback"></div>
-    <button class="new-btn" onclick="generate('plus5')">🔄 Nuovo esercizio</button>
   </div>
 </div>
 
-<!-- Decine -->
+<!-- ── DECINE ── -->
 <div id="section-tens" class="section">
   <div class="card">
     <h2>Contare di 10 in 10</h2>
-    <div class="mode-toggle">
-      <button class="mode-btn active" id="t-add" onclick="setMode('tens','add')">➕ Addizione</button>
-      <button class="mode-btn" id="t-sub" onclick="setMode('tens','sub')">➖ Sottrazione</button>
-    </div>
     <div class="score-bar">
-      <span id="streak-tens">🔥 Serie: 0</span>
-      <span class="score-badge" id="score-tens">⭐ 0 punti</span>
+      <span class="streak-badge" id="streak-tens">🔥 Serie: 0</span>
+      <span class="score-badge" id="score-tens">⭐ 0 / 5</span>
     </div>
-    <div id="seq-tens" class="sequence"></div>
-    <div class="answer-row">
-      <input type="number" id="inp-tens" class="answer-input" placeholder="?"
-             onkeydown="if(event.key==='Enter') check('tens')">
-      <button class="check-btn" onclick="check('tens')">✓</button>
+    <div id="rows-tens"></div>
+    <div class="bottom-bar">
+      <button class="new-btn" onclick="generateAll('tens')">🔄 Nuovi esercizi</button>
     </div>
-    <div id="fb-tens" class="feedback"></div>
-    <button class="new-btn" onclick="generate('tens')">🔄 Nuovo esercizio</button>
   </div>
 </div>
 
 <script>
-const state = {
-  plus2: { mode: 'add', answer: 0, score: 0, streak: 0 },
-  plus5: { mode: 'add', answer: 0, score: 0, streak: 0 },
-  tens:  { mode: 'add', answer: 0, score: 0, streak: 0 },
-};
-
+/* ════════════════════════════
+   NAV
+════════════════════════════ */
 function showSection(id, btn) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -332,99 +350,294 @@ function showSection(id, btn) {
   btn.classList.add('active');
 }
 
-function setMode(type, mode) {
-  state[type].mode = mode;
-  const prefix = type === 'plus2' ? 'p2' : type === 'plus5' ? 'p5' : 't';
-  document.getElementById(prefix + '-add').classList.toggle('active', mode === 'add');
-  document.getElementById(prefix + '-sub').classList.toggle('active', mode === 'sub');
-  generate(type);
-}
+/* ════════════════════════════
+   MATH EXERCISES
+════════════════════════════ */
+const exState = {
+  plus2: { exercises: [], solved: 0, streak: 0 },
+  plus5: { exercises: [], solved: 0, streak: 0 },
+  tens:  { exercises: [], solved: 0, streak: 0 },
+};
 
-function generate(type) {
-  const s = state[type];
-  const add = s.mode === 'add';
+function genOne(type) {
+  const add = Math.random() < 0.5;
   let start, step;
 
   if (type === 'plus2') {
     step = add ? 2 : -2;
-    // ensure all 5 numbers stay between 1 and 60
     start = add
-      ? Math.floor(Math.random() * 47) + 1        // 1–47
-      : Math.floor(Math.random() * 20) + 16;       // 16–35 → lowest = start-8 ≥ 8
+      ? Math.floor(Math.random() * 47) + 1
+      : Math.floor(Math.random() * 20) + 16;
   } else if (type === 'plus5') {
     step = add ? 5 : -5;
-    // multiples of 5 only
     start = add
-      ? (Math.floor(Math.random() * 15) + 1) * 5  // 5–75
-      : (Math.floor(Math.random() * 16) + 5) * 5; // 25–100 → lowest = start-20 ≥ 5
+      ? (Math.floor(Math.random() * 15) + 1) * 5
+      : (Math.floor(Math.random() * 16) + 5) * 5;
   } else {
     step = add ? 10 : -10;
-    // multiples of 10 only
     start = add
-      ? (Math.floor(Math.random() * 6) + 1) * 10  // 10–60 → highest = start+40 ≤ 100
-      : (Math.floor(Math.random() * 6) + 5) * 10; // 50–100 → lowest = start-40 ≥ 10
+      ? (Math.floor(Math.random() * 6) + 1) * 10
+      : (Math.floor(Math.random() * 6) + 5) * 10;
   }
 
   const nums = [0, 1, 2, 3, 4].map(i => start + i * step);
-  // blank is always position 3 (4th number)
-  s.answer = nums[3];
-
-  const seqEl = document.getElementById('seq-' + type);
-  seqEl.innerHTML = nums.map((n, i) => {
-    const box = (i === 3)
-      ? `<span class="num-box blank">?</span>`
-      : `<span class="num-box">${n}</span>`;
-    const arrow = (i < 4) ? `<span class="arrow">→</span>` : '';
-    return box + arrow;
-  }).join('');
-
-  const inp = document.getElementById('inp-' + type);
-  inp.value = '';
-  inp.className = 'answer-input';
-  document.getElementById('fb-' + type).textContent = '';
-  document.getElementById('fb-' + type).className = 'feedback';
-  inp.focus();
+  // blank position: randomly 2, 3 or 4 (keep at least 2 shown before and 1 after)
+  const blankIdx = Math.floor(Math.random() * 3) + 2; // 2, 3 or 4
+  return { nums, answer: nums[blankIdx], blankIdx };
 }
 
-function check(type) {
-  const s = state[type];
-  const inp = document.getElementById('inp-' + type);
-  const fb  = document.getElementById('fb-' + type);
+function generateAll(type) {
+  const s = exState[type];
+  s.exercises = Array.from({ length: 5 }, () => genOne(type));
+  s.solved = 0;
+  s.streak = 0;
+  updateScore(type);
+  renderRows(type);
+}
+
+function renderRows(type) {
+  const container = document.getElementById('rows-' + type);
+  const s = exState[type];
+  container.innerHTML = '';
+
+  s.exercises.forEach((ex, ri) => {
+    const row = document.createElement('div');
+    row.className = 'ex-row';
+    row.id = `row-${type}-${ri}`;
+
+    ex.nums.forEach((n, i) => {
+      if (i > 0) {
+        const arr = document.createElement('span');
+        arr.className = 'seq-arrow';
+        arr.textContent = '→';
+        row.appendChild(arr);
+      }
+      if (i === ex.blankIdx) {
+        const inp = document.createElement('input');
+        inp.type = 'number';
+        inp.inputMode = 'numeric';
+        inp.className = 'seq-input';
+        inp.id = `inp-${type}-${ri}`;
+        inp.placeholder = '?';
+        inp.autocomplete = 'off';
+        inp.addEventListener('keydown', e => {
+          if (e.key === 'Enter') checkRow(type, ri);
+        });
+        inp.addEventListener('input', () => {
+          // auto-check when value typed
+          const v = parseInt(inp.value);
+          if (!isNaN(v)) checkRow(type, ri);
+        });
+        row.appendChild(inp);
+      } else {
+        const box = document.createElement('div');
+        box.className = 'seq-num';
+        box.textContent = n;
+        row.appendChild(box);
+      }
+    });
+
+    const fb = document.createElement('span');
+    fb.className = 'row-feedback';
+    fb.id = `rfb-${type}-${ri}`;
+    row.appendChild(fb);
+
+    container.appendChild(row);
+  });
+
+  // focus first input
+  const first = document.getElementById(`inp-${type}-0`);
+  if (first) first.focus();
+}
+
+function checkRow(type, ri) {
+  const s = exState[type];
+  const ex = s.exercises[ri];
+  const inp = document.getElementById(`inp-${type}-${ri}`);
+  const fb  = document.getElementById(`rfb-${type}-${ri}`);
+  const row = document.getElementById(`row-${type}-${ri}`);
+  if (!inp || inp.dataset.done) return;
+
   const val = parseInt(inp.value);
   if (isNaN(val)) return;
 
-  if (val === s.answer) {
-    s.score++;
+  if (val === ex.answer) {
+    inp.className = 'seq-input ok';
+    inp.setAttribute('readonly', true);
+    inp.dataset.done = '1';
+    fb.textContent = '✅';
+    row.classList.add('correct-row');
+    s.solved++;
     s.streak++;
     updateScore(type);
-    fb.textContent = s.streak >= 3 ? '🔥 Fantastico! +1 ⭐' : '🌟 Bravo! Corretto!';
-    fb.className = 'feedback correct';
-    inp.className = 'answer-input ok';
-    setTimeout(() => generate(type), 1300);
+    // auto-focus next empty
+    focusNext(type, ri);
   } else {
+    inp.className = 'seq-input err';
+    fb.textContent = '❌';
+    row.classList.add('wrong-row');
     s.streak = 0;
     updateScore(type);
-    fb.textContent = '❌ Riprova!';
-    fb.className = 'feedback wrong';
-    inp.className = 'answer-input err';
     setTimeout(() => {
-      inp.className = 'answer-input';
+      inp.className = 'seq-input';
       inp.value = '';
-      inp.focus();
-    }, 900);
+      fb.textContent = '';
+      row.classList.remove('wrong-row');
+    }, 700);
+  }
+}
+
+function focusNext(type, ri) {
+  for (let i = ri + 1; i < 5; i++) {
+    const inp = document.getElementById(`inp-${type}-${i}`);
+    if (inp && !inp.dataset.done) { inp.focus(); return; }
   }
 }
 
 function updateScore(type) {
-  const s = state[type];
-  document.getElementById('score-' + type).textContent = `⭐ ${s.score} punt${s.score === 1 ? 'o' : 'i'}`;
-  document.getElementById('streak-' + type).textContent = `🔥 Serie: ${s.streak}`;
+  const s = exState[type];
+  document.getElementById(`score-${type}`).textContent  = `⭐ ${s.solved} / 5`;
+  document.getElementById(`streak-${type}`).textContent = `🔥 Serie: ${s.streak}`;
 }
 
-// Init
-generate('plus2');
-generate('plus5');
-generate('tens');
+/* ════════════════════════════
+   CRUCIVERBA EMBEDDED
+════════════════════════════ */
+let CP = null;
+const cRand  = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+const cPick  = () => Math.random()<0.5?'+':'-';
+const cApply = (a,op,b) => op==='+'?a+b:a-b;
+const cOk    = (...v) => v.every(x=>Number.isInteger(x)&&x>=1&&x<=20);
+
+function cGenerate() {
+  for (let t=0; t<200000; t++) {
+    const a0=cRand(2,15),b0=cRand(1,12),d0=cRand(1,12);
+    const a1=cRand(2,15),b1=cRand(1,12),d1=cRand(1,12);
+    const op1_0=cPick(),op2_0=cPick(),op1_1=cPick(),op2_1=cPick();
+    const opA=cPick(),opC=cPick(),opE=cPick(),op1_2=cPick(),op2_2=cPick();
+    const c0=cApply(a0,op1_0,b0),e0=cApply(c0,op2_0,d0);
+    const c1=cApply(a1,op1_1,b1),e1=cApply(c1,op2_1,d1);
+    if (!cOk(c0,e0,c1,e1)) continue;
+    const a2=cApply(a0,opA,a1),c2=cApply(c0,opC,c1),e2=cApply(e0,opE,e1);
+    if (!cOk(a2,c2,e2)) continue;
+    const b2=op1_2==='+'?c2-a2:a2-c2;
+    const d2=op2_2==='+'?e2-c2:c2-e2;
+    if (!cOk(b2,d2)) continue;
+    if (cApply(a2,op1_2,b2)!==c2||cApply(c2,op2_2,d2)!==e2) continue;
+    const derived=['c0','e0','c1','e1','a2','b2','c2','d2','e2'];
+    derived.sort(()=>Math.random()-0.5);
+    return {
+      v:{a0,b0,c0,d0,e0,a1,b1,c1,d1,e1,a2,b2,c2,d2,e2},
+      op:{op1_0,op2_0,op1_1,op2_1,op1_2,op2_2,opA,opC,opE},
+      hidden:new Set(derived.slice(0,6))
+    };
+  }
+  return {
+    v:{a0:8,b0:3,c0:11,d0:4,e0:15,a1:5,b1:2,c1:7,d1:6,e1:13,a2:3,b2:8,c2:4,d2:3,e2:2},
+    op:{op1_0:'+',op2_0:'+',op1_1:'+',op2_1:'+',op1_2:'-',op2_2:'-',opA:'-',opC:'-',opE:'-'},
+    hidden:new Set(['c0','e0','c1','e1','a2','c2'])
+  };
+}
+
+function cMakeNum(name) {
+  const d=document.createElement('div');
+  d.className='c-num';
+  if (CP.hidden.has(name)) {
+    d.classList.add('c-blank');
+    d.id='cw_'+name;
+    const i=document.createElement('input');
+    i.type='number';i.inputMode='numeric';i.pattern='[0-9]*';
+    i.id='cc_'+name;i.autocomplete='off';i.min='1';i.max='20';
+    i.addEventListener('focus',cClearFb);
+    d.appendChild(i);
+  } else {
+    d.textContent=CP.v[name];
+  }
+  return d;
+}
+
+function cEl(cls,txt) {
+  const d=document.createElement('div');
+  d.className=cls;d.textContent=txt||'';return d;
+}
+
+function cRender() {
+  const g=document.getElementById('cgrid');
+  g.innerHTML='';
+  const o=CP.op;
+  g.append(cMakeNum('a0'),cEl('c-oph',o.op1_0),cMakeNum('b0'),cEl('c-eqh','='),
+           cMakeNum('c0'),cEl('c-oph',o.op2_0),cMakeNum('d0'),cEl('c-eqh','='),cMakeNum('e0'));
+  g.append(cEl('c-opv',o.opA),cEl('c-spc'),cEl('c-spc'),cEl('c-spc'),
+           cEl('c-opv',o.opC),cEl('c-spc'),cEl('c-spc'),cEl('c-spc'),cEl('c-opv',o.opE));
+  g.append(cMakeNum('a1'),cEl('c-oph',o.op1_1),cMakeNum('b1'),cEl('c-eqh','='),
+           cMakeNum('c1'),cEl('c-oph',o.op2_1),cMakeNum('d1'),cEl('c-eqh','='),cMakeNum('e1'));
+  g.append(cEl('c-eqv','='),cEl('c-spc'),cEl('c-spc'),cEl('c-spc'),
+           cEl('c-eqv','='),cEl('c-spc'),cEl('c-spc'),cEl('c-spc'),cEl('c-eqv','='));
+  g.append(cMakeNum('a2'),cEl('c-oph',o.op1_2),cMakeNum('b2'),cEl('c-eqh','='),
+           cMakeNum('c2'),cEl('c-oph',o.op2_2),cMakeNum('d2'),cEl('c-eqh','='),cMakeNum('e2'));
+}
+
+function cGetVal(name) {
+  if (CP.hidden.has(name)) {
+    const v=parseInt(document.getElementById('cc_'+name).value);
+    return isNaN(v)?null:v;
+  }
+  return CP.v[name];
+}
+
+function cClearFb() {
+  const fb=document.getElementById('cfeedback');
+  fb.textContent='';fb.className='cruci-feedback';
+  CP.hidden.forEach(n=>{
+    const w=document.getElementById('cw_'+n);
+    if(w)w.classList.remove('c-correct','c-wrong');
+  });
+}
+
+function cVerify() {
+  const fb=document.getElementById('cfeedback');
+  const names=['a0','b0','c0','d0','e0','a1','b1','c1','d1','e1','a2','b2','c2','d2','e2'];
+  const v={};let allFilled=true;
+  names.forEach(n=>{const val=cGetVal(n);if(val===null)allFilled=false;v[n]=val;});
+  if (!allFilled){fb.textContent='⚠️ Riempi tutte le caselle blu!';fb.className='cruci-feedback warn';return;}
+  const o=CP.op;
+  const eqs=[
+    cApply(v.a0,o.op1_0,v.b0)===v.c0,cApply(v.c0,o.op2_0,v.d0)===v.e0,
+    cApply(v.a1,o.op1_1,v.b1)===v.c1,cApply(v.c1,o.op2_1,v.d1)===v.e1,
+    cApply(v.a2,o.op1_2,v.b2)===v.c2,cApply(v.c2,o.op2_2,v.d2)===v.e2,
+    cApply(v.a0,o.opA,v.a1)===v.a2,cApply(v.c0,o.opC,v.c1)===v.c2,
+    cApply(v.e0,o.opE,v.e1)===v.e2
+  ];
+  CP.hidden.forEach(n=>{
+    const w=document.getElementById('cw_'+n);
+    w.classList.remove('c-correct','c-wrong');
+    w.classList.add(v[n]===CP.v[n]?'c-correct':'c-wrong');
+  });
+  if (eqs.every(Boolean)){fb.textContent='🎉 Perfetto! Tutte le equazioni sono corrette!';fb.className='cruci-feedback ok';}
+  else {const wr=eqs.filter(x=>!x).length;fb.textContent=`❌ ${wr} equazion${wr===1?'e':'i'} errat${wr===1?'a':'e'}. Riprova!`;fb.className='cruci-feedback err';}
+}
+
+function cReset() {
+  CP.hidden.forEach(n=>{
+    const i=document.getElementById('cc_'+n);if(i)i.value='';
+    const w=document.getElementById('cw_'+n);if(w)w.classList.remove('c-correct','c-wrong');
+  });
+  const fb=document.getElementById('cfeedback');fb.textContent='';fb.className='cruci-feedback';
+}
+
+function cNew() {
+  document.getElementById('cfeedback').textContent='';
+  document.getElementById('cfeedback').className='cruci-feedback';
+  CP=cGenerate();cRender();
+}
+
+/* ════════════════════════════
+   INIT
+════════════════════════════ */
+generateAll('plus2');
+generateAll('plus5');
+generateAll('tens');
+CP=cGenerate();cRender();
 </script>
 </body>
 </html>

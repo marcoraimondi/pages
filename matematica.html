@@ -307,12 +307,54 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 .cruci-feedback.ok   { color: #2e7d32; }
 .cruci-feedback.err  { color: #c62828; }
 .cruci-feedback.warn { color: #e65100; }
+
+/* ── DIFFICOLTÀ ── */
+.diff-bar {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  justify-content: center;
+}
+.diff-btn {
+  padding: 7px 16px;
+  border-radius: 50px;
+  border: 2px solid rgba(255,255,255,0.5);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 800;
+  font-family: inherit;
+  background: rgba(255,255,255,0.18);
+  color: white;
+  transition: all 0.2s;
+}
+.diff-btn.active {
+  background: white;
+  color: #d81b60;
+  border-color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+}
+.diff-label {
+  text-align: center;
+  color: rgba(255,255,255,0.85);
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+}
 </style>
 </head>
 <body>
 
 <h1>🌸 Matematica 1C</h1>
 <p style="text-align:center;color:rgba(255,255,255,0.9);font-size:14px;margin-top:-4px;margin-bottom:14px;font-weight:700;letter-spacing:0.3px;">💕 Esercizi per Giorgia 💕</p>
+
+<p class="diff-label">⭐ Difficoltà</p>
+<div class="diff-bar">
+  <button class="diff-btn active" onclick="setDifficulty('easy',this)">🟢 Semplice</button>
+  <button class="diff-btn" onclick="setDifficulty('medium',this)">🟡 Media</button>
+  <button class="diff-btn" onclick="setDifficulty('hard',this)">🔴 Alta</button>
+</div>
 
 <nav class="nav">
   <button class="nav-btn active" onclick="showSection('cross',this)">✏️ Cruciverba</button>
@@ -445,7 +487,10 @@ function genOne(type) {
     type = subtypes[Math.floor(Math.random() * 3)];
   }
 
-  const add = Math.random() < 0.5;
+  // Direzione: probabilità crescente in base alla difficoltà
+  // easy=100% crescente, medium=70% crescente, hard=50% crescente
+  const addProb = difficulty === 'easy' ? 1.0 : difficulty === 'medium' ? 0.7 : 0.5;
+  const add = Math.random() < addProb;
   let start, step;
 
   if (type === 'plus2') {
@@ -471,8 +516,8 @@ function genOne(type) {
   }
 
   const nums = [0, 1, 2, 3, 4].map(i => start + i * step);
-  // 1 o 2 incognite, mixate casualmente
-  const numBlanks = Math.random() < 0.5 ? 1 : 2;
+  // Incognite: easy=sempre 1, medium=50% 1 o 2, hard=sempre 2
+  const numBlanks = difficulty === 'easy' ? 1 : difficulty === 'hard' ? 2 : (Math.random() < 0.5 ? 1 : 2);
   let i1 = Math.floor(Math.random() * 5);
   let blankIdxs;
   if (numBlanks === 1) {
@@ -655,6 +700,23 @@ function updateScore(type) {
 }
 
 /* ════════════════════════════
+   DIFFICOLTÀ
+════════════════════════════ */
+let difficulty = 'easy';
+
+function setDifficulty(d, btn) {
+  difficulty = d;
+  document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // Rigenera tutto con la nuova difficoltà
+  generateAll('plus2');
+  generateAll('plus5');
+  generateAll('tens');
+  generateAll('mix');
+  CP = cGenerate(); cRender();
+}
+
+/* ════════════════════════════
    CRUCIVERBA EMBEDDED
 ════════════════════════════ */
 let globalStreak = 0;
@@ -669,7 +731,7 @@ function addStreak() {
 
 let CP = null;
 const cRand  = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
-const cPick  = () => Math.random()<0.5?'+':'-';
+const cPick  = () => difficulty === 'easy' ? '+' : (Math.random()<0.5?'+':'-');
 const cApply = (a,op,b) => op==='+'?a+b:a-b;
 const cOk    = (...v) => v.every(x=>Number.isInteger(x)&&x>=1&&x<=20);
 

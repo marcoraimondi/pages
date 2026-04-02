@@ -314,6 +314,10 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 <div id="section-cross" class="section">
   <div class="card">
     <div class="cruci-wrap">
+      <h2>✏️ Cruciverba</h2>
+      <div class="score-bar" style="margin-bottom:10px">
+        <span class="streak-badge" id="streak-cross">🔥 Serie: 0</span>
+      </div>
       <p class="cruci-sub">Completa le caselle viola. Le equazioni devono tornare sia → che ↓</p>
       <div class="cruci-grid-wrap">
         <div class="cruci-grid" id="cgrid"></div>
@@ -587,7 +591,7 @@ function verifyAll(type) {
   });
 
   s.solved = correct;
-  s.streak = correct === 5 ? s.streak + 1 : 0;
+  if (correct === 5) addStreak();
   updateScore(type);
 
   const vfb = document.getElementById('vfb-' + type);
@@ -606,12 +610,22 @@ function verifyAll(type) {
 function updateScore(type) {
   const s = exState[type];
   document.getElementById(`score-${type}`).textContent  = `⭐ ${s.solved} / 5`;
-  document.getElementById(`streak-${type}`).textContent = `🔥 Serie: ${s.streak}`;
+  document.getElementById(`streak-${type}`).textContent = `🔥 Serie: ${globalStreak}`;
 }
 
 /* ════════════════════════════
    CRUCIVERBA EMBEDDED
 ════════════════════════════ */
+let globalStreak = 0;
+
+function addStreak() {
+  globalStreak++;
+  ['plus2','plus5','tens','mix','cross'].forEach(id => {
+    const el = document.getElementById('streak-' + id);
+    if (el) el.textContent = '🔥 Serie: ' + globalStreak;
+  });
+}
+
 let CP = null;
 const cRand  = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
 const cPick  = () => Math.random()<0.5?'+':'-';
@@ -723,6 +737,7 @@ function cVerify() {
     w.classList.add(v[n]===CP.v[n]?'c-correct':'c-wrong');
   });
   if (eqs.every(Boolean)){
+    addStreak();
     fb.textContent='🎉 Perfetto! Tutte le equazioni sono corrette!';fb.className='cruci-feedback ok';
   } else {
     const wr=eqs.filter(x=>!x).length;

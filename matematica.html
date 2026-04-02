@@ -159,39 +159,47 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
   color: #764ba2;
 }
 
-/* ── BOTTOM BUTTONS ── */
+/* ══ BOTTONI UNIFICATI ══ */
+.btn {
+  flex: 1;
+  height: 44px;
+  border-radius: 12px;
+  border: none;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: opacity 0.18s, background 0.18s;
+  letter-spacing: 0.3px;
+  min-width: 80px;
+}
+.btn:active { opacity: 0.82; }
+
+/* Viola pieno — Verifica */
+.btn-primary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  box-shadow: 0 3px 10px rgba(118,75,162,0.25);
+}
+.btn-primary:hover { opacity: 0.93; }
+
+/* Viola chiaro — Nuovo / Ricomincia */
+.btn-secondary {
+  background: #f3f0ff;
+  color: #764ba2;
+  border: 2px solid #ede7ff;
+}
+.btn-secondary:hover { background: #ede7ff; }
+
+/* ── BOTTOM BAR ── */
 .bottom-bar {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-top: 14px;
 }
-.verify-btn {
-  flex: 1.4;
-  height: 44px;
-  border-radius: 12px;
-  border: none;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-.verify-btn:active { opacity: 0.85; }
-.new-btn {
-  flex: 1;
-  height: 44px;
-  border-radius: 12px;
-  border: 2px solid #ede7ff;
-  background: #f3f0ff;
-  color: #764ba2;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.new-btn:hover { background: #ede7ff; }
+/* alias compatibilità */
+.verify-btn { flex:1.4; }
+.new-btn    { flex:1; }
 
 /* ══ CRUCIVERBA EMBEDDED STYLES ══ */
 .cruci-wrap {
@@ -265,13 +273,6 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
   display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
   margin-bottom: 10px;
 }
-.c-btn {
-  padding: 10px 18px; font-size: 14px; font-weight: 800;
-  border: none; border-radius: 10px; cursor: pointer;
-}
-.c-btn-verify { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
-.c-btn-reset  { background: #607d8b; color: white; }
-.c-btn-new    { background: #222; color: white; }
 .cruci-feedback {
   font-size: 15px; font-weight: 700;
   min-height: 24px; text-align: center;
@@ -302,9 +303,9 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
         <div class="cruci-grid" id="cgrid"></div>
       </div>
       <div class="cruci-btns">
-        <button class="c-btn c-btn-verify" onclick="cVerify()">✓ Verifica</button>
-        <button class="c-btn c-btn-reset"  onclick="cReset()">↺ Ricomincia</button>
-        <button class="c-btn c-btn-new"    onclick="cNew()">＋ Nuovo</button>
+        <button class="btn btn-primary"   onclick="cVerify()">✓ Verifica</button>
+        <button class="btn btn-secondary" onclick="cReset()">↺ Ricomincia</button>
+        <button class="btn btn-secondary" onclick="cNew()">＋ Nuovo</button>
       </div>
       <div class="cruci-feedback" id="cfeedback"></div>
     </div>
@@ -322,8 +323,8 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
     <div id="rows-plus2"></div>
     <div class="verify-feedback" id="vfb-plus2"></div>
     <div class="bottom-bar">
-      <button class="verify-btn" onclick="verifyAll('plus2')">✓ Verifica</button>
-      <button class="new-btn" onclick="generateAll('plus2')">🔄 Nuovo</button>
+      <button class="btn btn-primary verify-btn" onclick="verifyAll('plus2')">✓ Verifica</button>
+      <button class="btn btn-secondary new-btn" onclick="generateAll('plus2')">🔄 Nuovo</button>
     </div>
   </div>
 </div>
@@ -339,8 +340,8 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
     <div id="rows-plus5"></div>
     <div class="verify-feedback" id="vfb-plus5"></div>
     <div class="bottom-bar">
-      <button class="verify-btn" onclick="verifyAll('plus5')">✓ Verifica</button>
-      <button class="new-btn" onclick="generateAll('plus5')">🔄 Nuovo</button>
+      <button class="btn btn-primary verify-btn" onclick="verifyAll('plus5')">✓ Verifica</button>
+      <button class="btn btn-secondary new-btn" onclick="generateAll('plus5')">🔄 Nuovo</button>
     </div>
   </div>
 </div>
@@ -356,8 +357,8 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
     <div id="rows-tens"></div>
     <div class="verify-feedback" id="vfb-tens"></div>
     <div class="bottom-bar">
-      <button class="verify-btn" onclick="verifyAll('tens')">✓ Verifica</button>
-      <button class="new-btn" onclick="generateAll('tens')">🔄 Nuovo</button>
+      <button class="btn btn-primary verify-btn" onclick="verifyAll('tens')">✓ Verifica</button>
+      <button class="btn btn-secondary new-btn" onclick="generateAll('tens')">🔄 Nuovo</button>
     </div>
   </div>
 </div>

@@ -97,7 +97,7 @@ h1 {
   border-radius: 12px;
   background: #fafafa;
   border: 2px solid #eee;
-  transition: border-color 0.2s;
+  transition: border-color 0.3s, background 0.3s;
 }
 .ex-row.correct-row { border-color: #a5d6a7; background: #f1f8e9; }
 .ex-row.wrong-row   { border-color: #ef9a9a; background: #ffebee; }
@@ -149,6 +149,16 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
   flex-shrink: 0;
 }
 
+/* ── VERIFY FEEDBACK ── */
+.verify-feedback {
+  text-align: center;
+  font-size: 15px;
+  font-weight: bold;
+  min-height: 22px;
+  margin-top: 10px;
+  color: #764ba2;
+}
+
 /* ── BOTTOM BUTTONS ── */
 .bottom-bar {
   display: flex;
@@ -156,6 +166,19 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
   gap: 10px;
   margin-top: 14px;
 }
+.verify-btn {
+  flex: 1.4;
+  height: 44px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.verify-btn:active { opacity: 0.85; }
 .new-btn {
   flex: 1;
   height: 44px;
@@ -170,12 +193,6 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 }
 .new-btn:hover { background: #ede7ff; }
 
-/* ── CRUCIVERBA SECTION ── */
-#section-cross .card {
-  padding: 0;
-  overflow: hidden;
-}
-
 /* ══ CRUCIVERBA EMBEDDED STYLES ══ */
 .cruci-wrap {
   padding: 18px 12px 20px;
@@ -183,14 +200,15 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 .cruci-title {
   font-size: clamp(13px, 4vw, 19px);
   font-weight: 900;
-  color: #e05a00;
-  border: 3px solid #e05a00;
+  color: #764ba2;
+  border: 3px solid #764ba2;
   padding: 8px 16px;
-  border-radius: 6px;
+  border-radius: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
   text-align: center;
   margin-bottom: 8px;
+  background: linear-gradient(135deg, #f3f0ff, #ede7ff);
 }
 .cruci-sub {
   font-size: 12px;
@@ -213,23 +231,23 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 }
 .c-num {
   width: 44px; height: 44px;
-  border: 2.5px solid #333;
+  border: 2.5px solid #aaa;
   border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
   font-size: 17px; font-weight: 900;
   background: white;
-  color: #111;
+  color: #333;
 }
 .c-blank {
-  background: #e8f4fd !important;
-  border-color: #1565c0 !important;
+  background: #f3f0ff !important;
+  border-color: #764ba2 !important;
 }
 .c-blank input {
   width: 100%; height: 100%;
   border: none; border-radius: 6px;
   text-align: center;
   font-size: 17px; font-weight: 900;
-  color: #1565c0;
+  color: #764ba2;
   background: transparent;
   outline: none; padding: 0;
   font-family: inherit;
@@ -238,10 +256,9 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 .c-num.c-correct input { color: #2e7d32; }
 .c-num.c-wrong   { border-color: #c62828 !important; background: #ffebee !important; }
 .c-num.c-wrong   input { color: #c62828; }
-@keyframes shake { 0%,100%{ transform:translateX(0) } 25%{ transform:translateX(-5px) } 75%{ transform:translateX(5px) } }
-.c-oph { width:22px; height:44px; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:800; color:#e05a00; }
+.c-oph { width:22px; height:44px; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:800; color:#764ba2; }
 .c-eqh { width:22px; height:44px; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:700; color:#555; }
-.c-opv { width:44px; height:22px; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:800; color:#e05a00; }
+.c-opv { width:44px; height:22px; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:800; color:#764ba2; }
 .c-eqv { width:44px; height:22px; display:flex; align-items:center; justify-content:center; font-size:19px; font-weight:700; color:#555; }
 .c-spc { width:22px; height:22px; }
 .cruci-btns {
@@ -252,16 +269,16 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
   padding: 10px 18px; font-size: 14px; font-weight: 800;
   border: none; border-radius: 10px; cursor: pointer;
 }
-.c-btn-verify { background: #e05a00; color: white; }
+.c-btn-verify { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
 .c-btn-reset  { background: #607d8b; color: white; }
 .c-btn-new    { background: #222; color: white; }
 .cruci-feedback {
   font-size: 15px; font-weight: 700;
   min-height: 24px; text-align: center;
 }
-.cruci-feedback.ok  { color: #2e7d32; }
-.cruci-feedback.err { color: #c62828; }
-.cruci-feedback.warn{ color: #e65100; }
+.cruci-feedback.ok   { color: #2e7d32; }
+.cruci-feedback.err  { color: #c62828; }
+.cruci-feedback.warn { color: #e65100; }
 </style>
 </head>
 <body>
@@ -279,8 +296,8 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 <div id="section-cross" class="section">
   <div class="card">
     <div class="cruci-wrap">
-      <div class="cruci-title">Cruciverba Matematici</div>
-      <p class="cruci-sub">Completa le caselle blu. Le equazioni devono tornare sia → che ↓</p>
+      <div class="cruci-title">✏️ Cruciverba Matematici</div>
+      <p class="cruci-sub">Completa le caselle viola. Le equazioni devono tornare sia → che ↓</p>
       <div class="cruci-grid-wrap">
         <div class="cruci-grid" id="cgrid"></div>
       </div>
@@ -303,8 +320,10 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
       <span class="score-badge" id="score-plus2">⭐ 0 / 5</span>
     </div>
     <div id="rows-plus2"></div>
+    <div class="verify-feedback" id="vfb-plus2"></div>
     <div class="bottom-bar">
-      <button class="new-btn" onclick="generateAll('plus2')">🔄 Nuovi esercizi</button>
+      <button class="verify-btn" onclick="verifyAll('plus2')">✓ Verifica</button>
+      <button class="new-btn" onclick="generateAll('plus2')">🔄 Nuovo</button>
     </div>
   </div>
 </div>
@@ -318,8 +337,10 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
       <span class="score-badge" id="score-plus5">⭐ 0 / 5</span>
     </div>
     <div id="rows-plus5"></div>
+    <div class="verify-feedback" id="vfb-plus5"></div>
     <div class="bottom-bar">
-      <button class="new-btn" onclick="generateAll('plus5')">🔄 Nuovi esercizi</button>
+      <button class="verify-btn" onclick="verifyAll('plus5')">✓ Verifica</button>
+      <button class="new-btn" onclick="generateAll('plus5')">🔄 Nuovo</button>
     </div>
   </div>
 </div>
@@ -333,8 +354,10 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
       <span class="score-badge" id="score-tens">⭐ 0 / 5</span>
     </div>
     <div id="rows-tens"></div>
+    <div class="verify-feedback" id="vfb-tens"></div>
     <div class="bottom-bar">
-      <button class="new-btn" onclick="generateAll('tens')">🔄 Nuovi esercizi</button>
+      <button class="verify-btn" onclick="verifyAll('tens')">✓ Verifica</button>
+      <button class="new-btn" onclick="generateAll('tens')">🔄 Nuovo</button>
     </div>
   </div>
 </div>
@@ -381,7 +404,6 @@ function genOne(type) {
   }
 
   const nums = [0, 1, 2, 3, 4].map(i => start + i * step);
-  // blank position: randomly 2, 3 or 4 (keep at least 2 shown before and 1 after)
   const blankIdx = Math.floor(Math.random() * 3) + 2; // 2, 3 or 4
   return { nums, answer: nums[blankIdx], blankIdx };
 }
@@ -392,15 +414,15 @@ function generateAll(type) {
   s.solved = 0;
   s.streak = 0;
   updateScore(type);
+  document.getElementById('vfb-' + type).textContent = '';
   renderRows(type);
 }
 
 function renderRows(type) {
   const container = document.getElementById('rows-' + type);
-  const s = exState[type];
   container.innerHTML = '';
 
-  s.exercises.forEach((ex, ri) => {
+  exState[type].exercises.forEach((ex, ri) => {
     const row = document.createElement('div');
     row.className = 'ex-row';
     row.id = `row-${type}-${ri}`;
@@ -420,13 +442,16 @@ function renderRows(type) {
         inp.id = `inp-${type}-${ri}`;
         inp.placeholder = '?';
         inp.autocomplete = 'off';
+        // Enter: vai alla riga successiva, sull'ultima lancia verifica
         inp.addEventListener('keydown', e => {
-          if (e.key === 'Enter') checkRow(type, ri);
-        });
-        inp.addEventListener('input', () => {
-          // auto-check when value typed
-          const v = parseInt(inp.value);
-          if (!isNaN(v)) checkRow(type, ri);
+          if (e.key === 'Enter') {
+            if (ri < 4) {
+              const next = document.getElementById(`inp-${type}-${ri + 1}`);
+              if (next) next.focus();
+            } else {
+              verifyAll(type);
+            }
+          }
         });
         row.appendChild(inp);
       } else {
@@ -445,52 +470,50 @@ function renderRows(type) {
     container.appendChild(row);
   });
 
-  // focus first input
   const first = document.getElementById(`inp-${type}-0`);
   if (first) first.focus();
 }
 
-function checkRow(type, ri) {
+function verifyAll(type) {
   const s = exState[type];
-  const ex = s.exercises[ri];
-  const inp = document.getElementById(`inp-${type}-${ri}`);
-  const fb  = document.getElementById(`rfb-${type}-${ri}`);
-  const row = document.getElementById(`row-${type}-${ri}`);
-  if (!inp || inp.dataset.done) return;
+  let correct = 0;
 
-  const val = parseInt(inp.value);
-  if (isNaN(val)) return;
+  s.exercises.forEach((ex, ri) => {
+    const inp = document.getElementById(`inp-${type}-${ri}`);
+    const fb  = document.getElementById(`rfb-${type}-${ri}`);
+    const row = document.getElementById(`row-${type}-${ri}`);
 
-  if (val === ex.answer) {
-    inp.className = 'seq-input ok';
+    const val = parseInt(inp.value);
     inp.setAttribute('readonly', true);
-    inp.dataset.done = '1';
-    fb.textContent = '✅';
-    row.classList.add('correct-row');
-    s.solved++;
-    s.streak++;
-    updateScore(type);
-    // auto-focus next empty
-    focusNext(type, ri);
-  } else {
-    inp.className = 'seq-input err';
-    fb.textContent = '❌';
-    row.classList.add('wrong-row');
-    s.streak = 0;
-    updateScore(type);
-    setTimeout(() => {
-      inp.className = 'seq-input';
-      inp.value = '';
-      fb.textContent = '';
-      row.classList.remove('wrong-row');
-    }, 700);
-  }
-}
 
-function focusNext(type, ri) {
-  for (let i = ri + 1; i < 5; i++) {
-    const inp = document.getElementById(`inp-${type}-${i}`);
-    if (inp && !inp.dataset.done) { inp.focus(); return; }
+    row.classList.remove('correct-row', 'wrong-row');
+
+    if (!isNaN(val) && val === ex.answer) {
+      inp.className = 'seq-input ok';
+      fb.textContent = '✅';
+      row.classList.add('correct-row');
+      correct++;
+    } else {
+      inp.className = 'seq-input err';
+      fb.textContent = '❌';
+      row.classList.add('wrong-row');
+    }
+  });
+
+  s.solved = correct;
+  s.streak = correct === 5 ? s.streak + 1 : 0;
+  updateScore(type);
+
+  const vfb = document.getElementById('vfb-' + type);
+  if (correct === 5) {
+    vfb.textContent = '🎉 Perfetto! Tutti e 5 corretti!';
+    vfb.style.color = '#2e7d32';
+  } else if (correct === 0) {
+    vfb.textContent = '😅 Nessuno giusto, riprova!';
+    vfb.style.color = '#c62828';
+  } else {
+    vfb.textContent = `🙂 ${correct} su 5 corretti!`;
+    vfb.style.color = correct >= 3 ? '#2e7d32' : '#e65100';
   }
 }
 
@@ -599,7 +622,7 @@ function cVerify() {
   const names=['a0','b0','c0','d0','e0','a1','b1','c1','d1','e1','a2','b2','c2','d2','e2'];
   const v={};let allFilled=true;
   names.forEach(n=>{const val=cGetVal(n);if(val===null)allFilled=false;v[n]=val;});
-  if (!allFilled){fb.textContent='⚠️ Riempi tutte le caselle blu!';fb.className='cruci-feedback warn';return;}
+  if (!allFilled){fb.textContent='⚠️ Riempi tutte le caselle!';fb.className='cruci-feedback warn';return;}
   const o=CP.op;
   const eqs=[
     cApply(v.a0,o.op1_0,v.b0)===v.c0,cApply(v.c0,o.op2_0,v.d0)===v.e0,
@@ -613,8 +636,13 @@ function cVerify() {
     w.classList.remove('c-correct','c-wrong');
     w.classList.add(v[n]===CP.v[n]?'c-correct':'c-wrong');
   });
-  if (eqs.every(Boolean)){fb.textContent='🎉 Perfetto! Tutte le equazioni sono corrette!';fb.className='cruci-feedback ok';}
-  else {const wr=eqs.filter(x=>!x).length;fb.textContent=`❌ ${wr} equazion${wr===1?'e':'i'} errat${wr===1?'a':'e'}. Riprova!`;fb.className='cruci-feedback err';}
+  if (eqs.every(Boolean)){
+    fb.textContent='🎉 Perfetto! Tutte le equazioni sono corrette!';fb.className='cruci-feedback ok';
+  } else {
+    const wr=eqs.filter(x=>!x).length;
+    fb.textContent=`❌ ${wr} equazion${wr===1?'e':'i'} errat${wr===1?'a':'e'}. Riprova!`;
+    fb.className='cruci-feedback err';
+  }
 }
 
 function cReset() {

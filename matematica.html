@@ -303,15 +303,15 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 <h1>🌟 Matematica Divertente</h1>
 
 <nav class="nav">
-  <button class="nav-btn" onclick="showSection('cross',this)">✏️ Cruciverba</button>
-  <button class="nav-btn active" onclick="showSection('plus2',this)">+2 / −2</button>
+  <button class="nav-btn active" onclick="showSection('cross',this)">✏️ Cruciverba</button>
+  <button class="nav-btn" onclick="showSection('plus2',this)">+2 / −2</button>
   <button class="nav-btn" onclick="showSection('plus5',this)">+5 / −5</button>
   <button class="nav-btn" onclick="showSection('tens',this)">Decine</button>
   <button class="nav-btn" onclick="showSection('mix',this)">🎯 Mix</button>
 </nav>
 
 <!-- ── CRUCIVERBA ── -->
-<div id="section-cross" class="section">
+<div id="section-cross" class="section active">
   <div class="card">
     <div class="cruci-wrap">
       <h2>✏️ Cruciverba</h2>
@@ -333,7 +333,7 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 </div>
 
 <!-- ── +2/−2 ── -->
-<div id="section-plus2" class="section active">
+<div id="section-plus2" class="section">
   <div class="card">
     <h2>Contare di 2 in 2</h2>
     <div class="score-bar">

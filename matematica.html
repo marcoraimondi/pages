@@ -487,7 +487,8 @@ input[type=number].tg-inp::-webkit-outer-spin-button { -webkit-appearance: none;
   <button class="nav-btn" onclick="showSection('plus5',this)">🦋 +5 / −5</button>
   <button class="nav-btn" onclick="showSection('tens',this)">💫 Decine</button>
   <button class="nav-btn" onclick="showSection('mix',this)">🎀 Mix</button>
-  <button class="nav-btn" onclick="showSection('tappa',this)">🔟 Tappa</button>
+  <button class="nav-btn" onclick="showSection('tappa',this)">➕ Tappa +</button>
+  <button class="nav-btn" onclick="showSection('tappa-minus',this)">➖ Tappa −</button>
 </nav>
 
 <!-- ── CRUCIVERBA ── -->
@@ -588,7 +589,7 @@ input[type=number].tg-inp::-webkit-outer-spin-button { -webkit-appearance: none;
 <!-- ── TAPPA ALLA DECINA ── -->
 <div id="section-tappa" class="section">
   <div class="card">
-    <h2>🔟 Tappa alla Decina</h2>
+    <h2>➕ Tappa alla Decina (+)</h2>
     <div class="score-bar">
       <span class="streak-badge" id="streak-tappa">🌟 Serie: 0</span>
       <span class="score-badge" id="score-tappa">🌸 0 / 5</span>
@@ -600,6 +601,25 @@ input[type=number].tg-inp::-webkit-outer-spin-button { -webkit-appearance: none;
       <button class="btn btn-primary verify-btn" onclick="verifyTappa()">Verifica</button>
       <button class="btn btn-secondary" onclick="resetTappa()">Ricomincia</button>
       <button class="btn btn-secondary new-btn" onclick="generateTappa()">Nuovo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TAPPA ALLA DECINA SOTTRAZIONE ── -->
+<div id="section-tappa-minus" class="section">
+  <div class="card">
+    <h2>➖ Tappa alla Decina (−)</h2>
+    <div class="score-bar">
+      <span class="streak-badge" id="streak-tappa-minus">🌟 Serie: 0</span>
+      <span class="score-badge" id="score-tappa-minus">🌸 0 / 5</span>
+    </div>
+    <p style="text-align:center;font-size:12px;color:#888;margin-bottom:12px;">Fai tappa alla decina sottraendo 🌸</p>
+    <div id="rows-tappa-minus"></div>
+    <div class="verify-feedback" id="vfb-tappa-minus"></div>
+    <div class="bottom-bar">
+      <button class="btn btn-primary verify-btn" onclick="verifyTappaMinus()">Verifica</button>
+      <button class="btn btn-secondary" onclick="resetTappaMinus()">Ricomincia</button>
+      <button class="btn btn-secondary new-btn" onclick="generateTappaMinus()">Nuovo</button>
     </div>
   </div>
 </div>
@@ -859,6 +879,7 @@ function setDifficulty(d, btn) {
   generateAll('tens');
   generateAll('mix');
   generateTappa();
+  generateTappaMinus();
   CP = cGenerate(); cRender();
 }
 
@@ -869,7 +890,7 @@ let globalStreak = 0;
 
 function addStreak() {
   globalStreak++;
-  ['plus2','plus5','tens','mix','cross','tappa'].forEach(id => {
+  ['plus2','plus5','tens','mix','cross','tappa','tappa-minus'].forEach(id => {
     const el = document.getElementById('streak-' + id);
     if (el) el.textContent = '🌟 Serie: ' + globalStreak;
   });
@@ -1237,11 +1258,225 @@ function updateTappaScore() {
 
 
 
+/* ════════════════════════════
+   TAPPA ALLA DECINA — SOTTRAZIONE
+════════════════════════════ */
+const tappaMinusState = { exercises: [], solved: 0 };
+
+function genTappaMinusOne() {
+  let A, B, tries = 0;
+  do {
+    tries++;
+    if (difficulty === 'easy') {
+      A = Math.floor(Math.random() * 3) + 11; // 11–13
+      B = Math.floor(Math.random() * 3) + 2;  // 2–4
+    } else if (difficulty === 'medium') {
+      A = Math.floor(Math.random() * 6) + 11; // 11–16
+      B = Math.floor(Math.random() * 6) + 2;  // 2–7
+    } else {
+      A = Math.floor(Math.random() * 8) + 11; // 11–18
+      B = Math.floor(Math.random() * 8) + 2;  // 2–9
+    }
+    if (tries > 200) { A = 12; B = 5; break; }
+    const B1 = A - 10;
+    const B2 = B - B1;
+    if (B > A || B1 < 1 || B2 < 1 || B2 >= 10) continue;
+    break;
+  } while (true);
+  const B1 = A - 10;
+  const B2 = B - B1;
+  const Result = A - B;
+  return { A, B, B1, B2, Result };
+}
+
+function generateTappaMinus() {
+  tappaMinusState.exercises = Array.from({ length: 5 }, () => genTappaMinusOne());
+  tappaMinusState.solved = 0;
+  document.getElementById('vfb-tappa-minus').textContent = '';
+  renderTappaMinus();
+  updateTappaMinusScore();
+}
+
+function renderTappaMinus() {
+  const container = document.getElementById('rows-tappa-minus');
+  container.innerHTML = '';
+
+  tappaMinusState.exercises.forEach((ex, ri) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'tappa-ex';
+    wrap.id = 'tminus-ex-' + ri;
+
+    const grid = document.createElement('div');
+    grid.className = 'tappa-grid';
+
+    const span = (cls, txt) => {
+      const s = document.createElement('span');
+      s.className = cls; if (txt !== undefined) s.textContent = txt; return s;
+    };
+    const mkInp = (key) => {
+      const i = document.createElement('input');
+      i.type = 'number'; i.inputMode = 'numeric';
+      i.className = 'tg-inp';
+      i.id = 'tminp-' + ri + '-' + key;
+      i.placeholder = '?'; i.autocomplete = 'off'; return i;
+    };
+    const place = (el, col, row, colSpan) => {
+      el.style.gridColumn = colSpan ? col + ' / span ' + colSpan : String(col);
+      el.style.gridRow = String(row); return el;
+    };
+    const bridgeSvg = (type) => {
+      const div = document.createElement('div');
+      div.className = 'tg-bridge';
+      const c1 = 23, c2 = 72, c3 = 121;
+      const lines = type === 'lambda'
+        ? `<line x1="${c2}" y1="2" x2="${c1}" y2="24" stroke="#e65100" stroke-width="2.5" stroke-dasharray="5,3" stroke-linecap="round"/>` +
+          `<line x1="${c2}" y1="2" x2="${c3}" y2="24" stroke="#e65100" stroke-width="2.5" stroke-dasharray="5,3" stroke-linecap="round"/>`
+        : `<line x1="${c1}" y1="2" x2="${c2}" y2="24" stroke="#1565c0" stroke-width="2.5" stroke-dasharray="5,3" stroke-linecap="round"/>` +
+          `<line x1="${c3}" y1="2" x2="${c2}" y2="24" stroke="#1565c0" stroke-width="2.5" stroke-dasharray="5,3" stroke-linecap="round"/>`;
+      div.innerHTML = `<svg width="144" height="26" viewBox="0 0 144 26">${lines}</svg>`;
+      return div;
+    };
+
+    // ROW 1: A − B =
+    grid.appendChild(place(span('tg-num', ex.A),           1, 1));
+    grid.appendChild(place(span('tg-op', '−'),              2, 1));
+    grid.appendChild(place(span('tg-num tg-bnum', ex.B),   4, 1));
+    grid.appendChild(place(span('tg-op', '='),              6, 1));
+    const rfb = span('tg-rfb'); rfb.id = 'tmrfb-' + ri;
+    grid.appendChild(place(rfb, 7, 1));
+
+    // ROW 2: lambda bridge over cols 3-5 (splits B into B1, B2)
+    grid.appendChild(place(bridgeSvg('lambda'), 3, 2, 3));
+
+    // ROW 3: inpA − inpB1 − inpB2 =
+    const inpA  = mkInp('a');
+    const inpB1 = mkInp('b1');
+    const inpB2 = mkInp('b2');
+    grid.appendChild(place(inpA,                   1, 3));
+    grid.appendChild(place(span('tg-op', '−'),     2, 3));
+    grid.appendChild(place(inpB1,                  3, 3));
+    grid.appendChild(place(span('tg-op', '−'),     4, 3));
+    grid.appendChild(place(inpB2,                  5, 3));
+    grid.appendChild(place(span('tg-op', '='),     6, 3));
+
+    // ROW 4: V bridge over cols 1-3 (A − B1 converge to 10)
+    grid.appendChild(place(bridgeSvg('v'), 1, 4, 3));
+
+    // ROW 5: inpTen − inpB2c = inpRes
+    const inpTen = mkInp('ten');
+    const inpB2c = mkInp('b2c');
+    const inpRes = mkInp('res');
+    grid.appendChild(place(inpTen,                 2, 5));
+    grid.appendChild(place(span('tg-op', '−'),     3, 5));
+    grid.appendChild(place(inpB2c,                 5, 5));
+    grid.appendChild(place(span('tg-op', '='),     6, 5));
+    grid.appendChild(place(inpRes,                 7, 5));
+
+    wrap.appendChild(grid);
+    container.appendChild(wrap);
+
+    const all = [inpA, inpB1, inpB2, inpTen, inpB2c, inpRes];
+    all.forEach((inp, pos) => {
+      inp.addEventListener('keydown', e => {
+        if (e.key !== 'Enter') return;
+        if (pos < 5) { all[pos + 1].focus(); }
+        else if (ri < 4) {
+          const nxt = document.getElementById('tminp-' + (ri + 1) + '-a');
+          if (nxt) nxt.focus();
+        } else { verifyTappaMinus(); }
+      });
+      inp.addEventListener('input', () => {
+        if (inp.classList.contains('tg-err')) {
+          inp.classList.remove('tg-err');
+          const rfb2 = document.getElementById('tmrfb-' + ri);
+          if (rfb2) rfb2.textContent = '';
+          const w = document.getElementById('tminus-ex-' + ri);
+          if (w) w.classList.remove('t-wrong');
+        }
+      });
+    });
+  });
+
+  const first = document.getElementById('tminp-0-a');
+  if (first) first.focus();
+}
+
+function verifyTappaMinus() {
+  let correct = 0;
+  tappaMinusState.exercises.forEach((ex, ri) => {
+    const get = k => document.getElementById('tminp-' + ri + '-' + k);
+    const inpA = get('a'), inpB1 = get('b1'), inpB2 = get('b2');
+    const inpTen = get('ten'), inpB2c = get('b2c'), inpRes = get('res');
+    const rfb  = document.getElementById('tmrfb-' + ri);
+    const wrap = document.getElementById('tminus-ex-' + ri);
+
+    const vA   = parseInt(inpA.value);
+    const vB1  = parseInt(inpB1.value), vB2  = parseInt(inpB2.value);
+    const vTen = parseInt(inpTen.value), vB2c = parseInt(inpB2c.value);
+    const vRes = parseInt(inpRes.value);
+
+    const okA   = !isNaN(vA)   && vA   === ex.A;
+    const okB1  = !isNaN(vB1)  && vB1  === ex.B1;
+    const okB2  = !isNaN(vB2)  && vB2  === ex.B2;
+    const okTen = !isNaN(vTen) && vTen === 10;
+    const okB2c = !isNaN(vB2c) && vB2c === ex.B2;
+    const okRes = !isNaN(vRes) && vRes === ex.Result;
+
+    const sc = (inp, ok) => { inp.className = 'tg-inp ' + (ok ? 'tg-ok' : 'tg-err'); };
+    sc(inpA, okA); sc(inpB1, okB1); sc(inpB2, okB2);
+    sc(inpTen, okTen); sc(inpB2c, okB2c); sc(inpRes, okRes);
+
+    wrap.classList.remove('t-correct', 't-wrong');
+    if (okA && okB1 && okB2 && okTen && okB2c && okRes) {
+      rfb.textContent = '✅'; wrap.classList.add('t-correct'); correct++;
+    } else {
+      rfb.textContent = '❌'; wrap.classList.add('t-wrong');
+    }
+  });
+
+  tappaMinusState.solved = correct;
+  if (correct === 5) addStreak();
+  updateTappaMinusScore();
+
+  const vfb = document.getElementById('vfb-tappa-minus');
+  if (correct === 5) {
+    vfb.textContent = '🌟 Bravissima Giorgia! Tutti e 5 giusti! 🌸';
+    vfb.style.color = '#2e7d32';
+  } else if (correct === 0) {
+    vfb.textContent = '💪 Nessuno giusto ancora, riprova! 🌸';
+    vfb.style.color = '#c62828';
+  } else {
+    vfb.textContent = '💖 ' + correct + ' su 5 giusti, continua così!';
+    vfb.style.color = correct >= 3 ? '#2e7d32' : '#e65100';
+  }
+}
+
+function resetTappaMinus() {
+  tappaMinusState.exercises.forEach((ex, ri) => {
+    ['a','b1','b2','ten','b2c','res'].forEach(k => {
+      const inp = document.getElementById('tminp-' + ri + '-' + k);
+      if (!inp) return;
+      inp.value = ''; inp.className = 'tg-inp';
+    });
+    const rfb = document.getElementById('tmrfb-' + ri);
+    if (rfb) rfb.textContent = '';
+    const wrap = document.getElementById('tminus-ex-' + ri);
+    if (wrap) wrap.classList.remove('t-correct', 't-wrong');
+  });
+  document.getElementById('vfb-tappa-minus').textContent = '';
+}
+
+function updateTappaMinusScore() {
+  document.getElementById('score-tappa-minus').textContent  = '🌸 ' + tappaMinusState.solved + ' / 5';
+  document.getElementById('streak-tappa-minus').textContent = '🌟 Serie: ' + globalStreak;
+}
+
 generateAll('plus2');
 generateAll('plus5');
 generateAll('tens');
 generateAll('mix');
 generateTappa();
+generateTappaMinus();
 CP=cGenerate();cRender();
 </script>
 </body>

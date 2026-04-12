@@ -423,24 +423,18 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 .t-inp.t-err { border-style: solid; border-color: #c62828 !important; background: #ffebee !important; color: #c62828; }
 input[type=number].t-inp::-webkit-inner-spin-button,
 input[type=number].t-inp::-webkit-outer-spin-button { -webkit-appearance: none; }
-/* Bridge visual */
-.t-bridge-row {
+/* Bridge visual (Lambda up / V down) */
+.t-bridge-up {
   display: flex;
-  align-items: center;
-  margin-bottom: 3px;
-  padding-left: 4px;
+  justify-content: center;
+  margin: 0 0 2px 30px; /* allinea approssimativamente sotto B */
 }
-.t-bridge-inner {
+.t-bridge-down {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
+  justify-content: center;
+  margin: 0 0 2px 0;
 }
-.t-bridge-split {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
+.t-bnum { color: #e65100 !important; }
 .t-rfb {
   font-size: 18px;
   min-width: 24px;
@@ -1024,6 +1018,7 @@ function generateTappa() {
   updateTappaScore();
 }
 
+
 function renderTappa() {
   const container = document.getElementById('rows-tappa');
   container.innerHTML = '';
@@ -1032,138 +1027,121 @@ function renderTappa() {
     wrap.className = 'tappa-ex';
     wrap.id = 'tappa-ex-' + ri;
 
-    // Line 1: Problem  A + B =
+    // Riga 1: A + B = (dato, nessun input)
     const row1 = document.createElement('div');
     row1.className = 't-row';
     row1.innerHTML =
       '<span class="t-num">' + ex.A + '</span>' +
       '<span class="t-op">+</span>' +
-      '<span class="t-num" style="color:#e65100">' + ex.B + '</span>' +
-      '<span class="t-op">=</span>';
-    const inpResult = document.createElement('input');
-    inpResult.type = 'number'; inpResult.inputMode = 'numeric';
-    inpResult.className = 't-inp'; inpResult.id = 'tinp-' + ri + '-res';
-    inpResult.placeholder = '?'; inpResult.autocomplete = 'off';
-    row1.appendChild(inpResult);
-    const rfb = document.createElement('span');
-    rfb.className = 't-rfb'; rfb.id = 'trfb-' + ri;
-    row1.appendChild(rfb);
+      '<span class="t-num t-bnum">' + ex.B + '</span>' +
+      '<span class="t-op">=</span>' +
+      '<span class="t-rfb" id="trfb-' + ri + '"></span>';
     wrap.appendChild(row1);
 
-    // Bridge: SVG + split inputs
-    const bridgeRow = document.createElement('div');
-    bridgeRow.className = 't-bridge-row';
-    bridgeRow.innerHTML =
-      '<svg width="60" height="22" viewBox="0 0 60 22" style="flex-shrink:0;margin-right:4px">' +
-      '<line x1="30" y1="2" x2="8" y2="20" stroke="#f48fb1" stroke-width="2" stroke-dasharray="4,2"/>' +
-      '<line x1="30" y1="2" x2="52" y2="20" stroke="#f48fb1" stroke-width="2" stroke-dasharray="4,2"/>' +
+    // Bridge Lambda: B si spacca in X e Y
+    const bUp = document.createElement('div');
+    bUp.className = 't-bridge-up';
+    bUp.innerHTML =
+      '<svg width="80" height="20" viewBox="0 0 80 20">' +
+      '<line x1="40" y1="18" x2="12" y2="2" stroke="#e65100" stroke-width="2" stroke-dasharray="4,2"/>' +
+      '<line x1="40" y1="18" x2="68" y2="2" stroke="#e65100" stroke-width="2" stroke-dasharray="4,2"/>' +
       '</svg>';
-    const splitDiv = document.createElement('div');
-    splitDiv.className = 't-bridge-split';
-    const inpX = document.createElement('input');
-    inpX.type = 'number'; inpX.inputMode = 'numeric';
-    inpX.className = 't-inp t-inp-sm'; inpX.id = 'tinp-' + ri + '-x';
-    inpX.placeholder = '?'; inpX.autocomplete = 'off';
-    const inpY = document.createElement('input');
-    inpY.type = 'number'; inpY.inputMode = 'numeric';
-    inpY.className = 't-inp t-inp-sm'; inpY.id = 'tinp-' + ri + '-y';
-    inpY.placeholder = '?'; inpY.autocomplete = 'off';
-    splitDiv.appendChild(inpX);
-    splitDiv.appendChild(inpY);
-    bridgeRow.appendChild(splitDiv);
-    wrap.appendChild(bridgeRow);
+    wrap.appendChild(bUp);
 
-    // Line 2: A + x_ref + y_ref =
+    // Riga 2: [a_copy] + [x] + [y] =  (tutti input)
     const row2 = document.createElement('div');
     row2.className = 't-row';
-    row2.innerHTML =
-      '<span class="t-num">' + ex.A + '</span>' +
-      '<span class="t-op">+</span>' +
-      '<span class="t-ref" id="tref-' + ri + '-x">_</span>' +
-      '<span class="t-op">+</span>' +
-      '<span class="t-ref" id="tref-' + ri + '-y">_</span>' +
-      '<span class="t-op">=</span>';
+    const inpA = tMkInp(ri, 'a');
+    const inpX = tMkInp(ri, 'x');
+    const inpY = tMkInp(ri, 'y');
+    [inpA, tOp('+'), inpX, tOp('+'), inpY, tOp('=')].forEach(el => row2.appendChild(el));
     wrap.appendChild(row2);
 
-    // Line 3: 10 + y_ref2 = result_ref
+    // Bridge V: A + X convergono a 10
+    const bDown = document.createElement('div');
+    bDown.className = 't-bridge-down';
+    bDown.innerHTML =
+      '<svg width="80" height="20" viewBox="0 0 80 20">' +
+      '<line x1="12" y1="2" x2="40" y2="18" stroke="#1565c0" stroke-width="2" stroke-dasharray="4,2"/>' +
+      '<line x1="68" y1="2" x2="40" y2="18" stroke="#1565c0" stroke-width="2" stroke-dasharray="4,2"/>' +
+      '</svg>';
+    wrap.appendChild(bDown);
+
+    // Riga 3: [ten] + [y2] = [res]  (tutti input)
     const row3 = document.createElement('div');
     row3.className = 't-row';
-    row3.innerHTML =
-      '<span class="t-num t-ten">10</span>' +
-      '<span class="t-op">+</span>' +
-      '<span class="t-ref" id="tref2-' + ri + '-y">_</span>' +
-      '<span class="t-op">=</span>' +
-      '<span class="t-ref t-final" id="tref-' + ri + '-res">_</span>';
+    const inpTen = tMkInp(ri, 'ten');
+    const inpY2  = tMkInp(ri, 'y2');
+    const inpRes = tMkInp(ri, 'res');
+    [inpTen, tOp('+'), inpY2, tOp('='), inpRes].forEach(el => row3.appendChild(el));
     wrap.appendChild(row3);
+
     container.appendChild(wrap);
 
-    // Live mirrors
-    inpX.addEventListener('input', () => {
-      const v = parseInt(inpX.value);
-      document.getElementById('tref-' + ri + '-x').textContent = isNaN(v) ? '_' : v;
-      clearTappaErr(ri, 'x', inpX);
-    });
-    inpY.addEventListener('input', () => {
-      const v = parseInt(inpY.value);
-      document.getElementById('tref-' + ri + '-y').textContent = isNaN(v) ? '_' : v;
-      document.getElementById('tref2-' + ri + '-y').textContent = isNaN(v) ? '_' : v;
-      clearTappaErr(ri, 'y', inpY);
-    });
-    inpResult.addEventListener('input', () => {
-      const v = parseInt(inpResult.value);
-      document.getElementById('tref-' + ri + '-res').textContent = isNaN(v) ? '_' : v;
-      clearTappaErr(ri, 'res', inpResult);
-    });
-
-    // Enter navigation
-    [inpX, inpY, inpResult].forEach((inp, pos) => {
+    // Enter navigation: a → x → y → ten → y2 → res → next exercise
+    const all = [inpA, inpX, inpY, inpTen, inpY2, inpRes];
+    all.forEach((inp, pos) => {
       inp.addEventListener('keydown', e => {
         if (e.key !== 'Enter') return;
-        const nextInps = [inpX, inpY, inpResult];
-        if (pos < 2) { nextInps[pos + 1].focus(); }
-        else if (ri < 4) { document.getElementById('tinp-' + (ri+1) + '-x').focus(); }
-        else { verifyTappa(); }
+        if (pos < 5) { all[pos + 1].focus(); }
+        else if (ri < 4) {
+          const nxt = document.getElementById('tinp-' + (ri + 1) + '-a');
+          if (nxt) nxt.focus();
+        } else { verifyTappa(); }
+      });
+      inp.addEventListener('input', () => {
+        if (inp.classList.contains('t-err')) {
+          inp.classList.remove('t-err');
+          const rfb = document.getElementById('trfb-' + ri);
+          if (rfb) rfb.textContent = '';
+          const w = document.getElementById('tappa-ex-' + ri);
+          if (w) w.classList.remove('t-wrong');
+        }
       });
     });
   });
-
-  const first = document.getElementById('tinp-0-x');
+  const first = document.getElementById('tinp-0-a');
   if (first) first.focus();
 }
 
-function clearTappaErr(ri, key, inp) {
-  if (inp.classList.contains('t-err')) {
-    inp.classList.remove('t-err');
-    const wrap = document.getElementById('tappa-ex-' + ri);
-    if (wrap) wrap.classList.remove('t-wrong');
-    const rfb = document.getElementById('trfb-' + ri);
-    if (rfb) rfb.textContent = '';
-  }
+function tMkInp(ri, key) {
+  const inp = document.createElement('input');
+  inp.type = 'number'; inp.inputMode = 'numeric';
+  inp.className = 't-inp';
+  inp.id = 'tinp-' + ri + '-' + key;
+  inp.placeholder = '?'; inp.autocomplete = 'off';
+  return inp;
+}
+function tOp(txt) {
+  const s = document.createElement('span');
+  s.className = 't-op'; s.textContent = txt; return s;
 }
 
 function verifyTappa() {
   let correct = 0;
   tappaState.exercises.forEach((ex, ri) => {
-    const inpX   = document.getElementById('tinp-' + ri + '-x');
-    const inpY   = document.getElementById('tinp-' + ri + '-y');
-    const inpRes = document.getElementById('tinp-' + ri + '-res');
-    const rfb    = document.getElementById('trfb-' + ri);
-    const wrap   = document.getElementById('tappa-ex-' + ri);
+    const get = k => document.getElementById('tinp-' + ri + '-' + k);
+    const inpA = get('a'), inpX = get('x'), inpY = get('y');
+    const inpTen = get('ten'), inpY2 = get('y2'), inpRes = get('res');
+    const rfb  = document.getElementById('trfb-' + ri);
+    const wrap = document.getElementById('tappa-ex-' + ri);
 
-    const vX = parseInt(inpX.value);
-    const vY = parseInt(inpY.value);
-    const vR = parseInt(inpRes.value);
+    const vA   = parseInt(inpA.value),   vX  = parseInt(inpX.value),  vY  = parseInt(inpY.value);
+    const vTen = parseInt(inpTen.value), vY2 = parseInt(inpY2.value), vRes = parseInt(inpRes.value);
 
-    const okX = !isNaN(vX) && vX === ex.X;
-    const okY = !isNaN(vY) && vY === ex.Y;
-    const okR = !isNaN(vR) && vR === ex.Result;
+    const okA   = !isNaN(vA)   && vA   === ex.A;
+    const okX   = !isNaN(vX)   && vX   === ex.X;
+    const okY   = !isNaN(vY)   && vY   === ex.Y;
+    const okTen = !isNaN(vTen) && vTen === 10;
+    const okY2  = !isNaN(vY2)  && vY2  === ex.Y;
+    const okRes = !isNaN(vRes) && vRes === ex.Result;
 
-    inpX.className   = 't-inp t-inp-sm ' + (okX ? 't-ok' : 't-err');
-    inpY.className   = 't-inp t-inp-sm ' + (okY ? 't-ok' : 't-err');
-    inpRes.className = 't-inp '          + (okR ? 't-ok' : 't-err');
+    const sc = (inp, ok) => { inp.className = 't-inp ' + (ok ? 't-ok' : 't-err'); };
+    sc(inpA, okA); sc(inpX, okX); sc(inpY, okY);
+    sc(inpTen, okTen); sc(inpY2, okY2); sc(inpRes, okRes);
 
     wrap.classList.remove('t-correct', 't-wrong');
-    if (okX && okY && okR) {
+    if (okA && okX && okY && okTen && okY2 && okRes) {
       rfb.textContent = '✅';
       wrap.classList.add('t-correct');
       correct++;
@@ -1185,26 +1163,19 @@ function verifyTappa() {
     vfb.textContent = '💪 Nessuno giusto ancora, riprova! 🌸';
     vfb.style.color = '#c62828';
   } else {
-    vfb.textContent = `💖 ${correct} su 5 giusti, continua così!`;
+    vfb.textContent = '💖 ' + correct + ' su 5 giusti, continua così!';
     vfb.style.color = correct >= 3 ? '#2e7d32' : '#e65100';
   }
 }
 
 function resetTappa() {
   tappaState.exercises.forEach((ex, ri) => {
-    ['x','y','res'].forEach(k => {
+    ['a','x','y','ten','y2','res'].forEach(k => {
       const inp = document.getElementById('tinp-' + ri + '-' + k);
-      if (inp) {
-        inp.value = '';
-        inp.className = inp.className.replace(/t-ok|t-err/g, '').trim();
-      }
+      if (!inp) return;
+      inp.value = '';
+      inp.className = 't-inp';
     });
-    ['x','y','res'].forEach(k => {
-      const ref = document.getElementById('tref-' + ri + '-' + k);
-      if (ref) ref.textContent = '_';
-    });
-    const ref2y = document.getElementById('tref2-' + ri + '-y');
-    if (ref2y) ref2y.textContent = '_';
     const rfb = document.getElementById('trfb-' + ri);
     if (rfb) rfb.textContent = '';
     const wrap = document.getElementById('tappa-ex-' + ri);
@@ -1214,9 +1185,10 @@ function resetTappa() {
 }
 
 function updateTappaScore() {
-  document.getElementById('score-tappa').textContent  = `🌸 ${tappaState.solved} / 5`;
-  document.getElementById('streak-tappa').textContent = `🌟 Serie: ${globalStreak}`;
+  document.getElementById('score-tappa').textContent  = '🌸 ' + tappaState.solved + ' / 5';
+  document.getElementById('streak-tappa').textContent = '🌟 Serie: ' + globalStreak;
 }
+
 
 
 generateAll('plus2');

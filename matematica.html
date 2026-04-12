@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8"><!-- v2.1 -->
+<meta charset="UTF-8"><!-- v3.0 -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -358,6 +358,96 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 .diff-dot.easy   { background: #4caf50; }
 .diff-dot.medium { background: #ff9800; }
 .diff-dot.hard   { background: #e53935; }
+
+/* ══ TAPPA ALLA DECINA ══ */
+.tappa-ex {
+  background: #fafafa;
+  border: 2px solid #eee;
+  border-radius: 14px;
+  padding: 10px 12px 8px;
+  margin-bottom: 12px;
+  position: relative;
+  transition: border-color 0.3s, background 0.3s;
+}
+.tappa-ex.t-correct { border-color: #a5d6a7; background: #f1f8e9; }
+.tappa-ex.t-wrong   { border-color: #ef9a9a; background: #ffebee; }
+.t-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 4px;
+  min-height: 34px;
+}
+.t-num {
+  font-size: 17px;
+  font-weight: 900;
+  color: #333;
+  min-width: 22px;
+  text-align: center;
+}
+.t-num.t-ten { color: #d81b60; }
+.t-op {
+  font-size: 15px;
+  font-weight: 800;
+  color: #d81b60;
+}
+.t-ref {
+  font-size: 16px;
+  font-weight: 900;
+  color: #c2185b;
+  min-width: 22px;
+  text-align: center;
+  font-style: italic;
+  opacity: 0.65;
+}
+.t-ref.t-final { color: #2e7d32; opacity: 1; font-style: normal; }
+.t-inp {
+  width: 46px;
+  height: 36px;
+  border-radius: 10px;
+  border: 2px dashed #f48fb1;
+  background: #fff0f7;
+  font-size: 16px;
+  font-weight: 800;
+  font-family: inherit;
+  text-align: center;
+  outline: none;
+  color: #d81b60;
+  flex-shrink: 0;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+.t-inp-sm { width: 36px; height: 32px; font-size: 14px; }
+.t-inp:focus { border-color: #d81b60; background: #fce4ec; border-style: solid; }
+.t-inp.t-ok  { border-style: solid; border-color: #2e7d32 !important; background: #e8f5e9 !important; color: #2e7d32; }
+.t-inp.t-err { border-style: solid; border-color: #c62828 !important; background: #ffebee !important; color: #c62828; }
+input[type=number].t-inp::-webkit-inner-spin-button,
+input[type=number].t-inp::-webkit-outer-spin-button { -webkit-appearance: none; }
+/* Bridge visual */
+.t-bridge-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 3px;
+  padding-left: 4px;
+}
+.t-bridge-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.t-bridge-split {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.t-rfb {
+  font-size: 18px;
+  min-width: 24px;
+  text-align: center;
+  margin-left: auto;
+  padding-left: 4px;
+}
 </style>
 </head>
 <body>
@@ -378,6 +468,7 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
   <button class="nav-btn" onclick="showSection('plus5',this)">🦋 +5 / −5</button>
   <button class="nav-btn" onclick="showSection('tens',this)">💫 Decine</button>
   <button class="nav-btn" onclick="showSection('mix',this)">🎀 Mix</button>
+  <button class="nav-btn" onclick="showSection('tappa',this)">🔟 Tappa</button>
 </nav>
 
 <!-- ── CRUCIVERBA ── -->
@@ -471,6 +562,25 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
       <button class="btn btn-primary verify-btn" onclick="verifyAll('mix')">Verifica</button>
       <button class="btn btn-secondary" onclick="resetAll('mix')">Ricomincia</button>
       <button class="btn btn-secondary new-btn" onclick="generateAll('mix')">Nuovo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TAPPA ALLA DECINA ── -->
+<div id="section-tappa" class="section">
+  <div class="card">
+    <h2>🔟 Tappa alla Decina</h2>
+    <div class="score-bar">
+      <span class="streak-badge" id="streak-tappa">🌟 Serie: 0</span>
+      <span class="score-badge" id="score-tappa">🌸 0 / 5</span>
+    </div>
+    <p style="text-align:center;font-size:12px;color:#888;margin-bottom:12px;">Fai tappa alla decina e calcola 🌸</p>
+    <div id="rows-tappa"></div>
+    <div class="verify-feedback" id="vfb-tappa"></div>
+    <div class="bottom-bar">
+      <button class="btn btn-primary verify-btn" onclick="verifyTappa()">Verifica</button>
+      <button class="btn btn-secondary" onclick="resetTappa()">Ricomincia</button>
+      <button class="btn btn-secondary new-btn" onclick="generateTappa()">Nuovo</button>
     </div>
   </div>
 </div>
@@ -729,6 +839,7 @@ function setDifficulty(d, btn) {
   generateAll('plus5');
   generateAll('tens');
   generateAll('mix');
+  generateTappa();
   CP = cGenerate(); cRender();
 }
 
@@ -739,7 +850,7 @@ let globalStreak = 0;
 
 function addStreak() {
   globalStreak++;
-  ['plus2','plus5','tens','mix','cross'].forEach(id => {
+  ['plus2','plus5','tens','mix','cross','tappa'].forEach(id => {
     const el = document.getElementById('streak-' + id);
     if (el) el.textContent = '🌟 Serie: ' + globalStreak;
   });
@@ -880,12 +991,239 @@ function cNew() {
 }
 
 /* ════════════════════════════
-   INIT
+   TAPPA ALLA DECINA
 ════════════════════════════ */
+const tappaState = { exercises: [], solved: 0 };
+
+function genTappaOne() {
+  let A, B, tries = 0;
+  do {
+    tries++;
+    if (difficulty === 'easy') {
+      A = Math.floor(Math.random() * 3) + 7; // 7–9
+      B = Math.floor(Math.random() * 5) + 2; // 2–6
+    } else if (difficulty === 'medium') {
+      A = Math.floor(Math.random() * 4) + 6; // 6–9
+      B = Math.floor(Math.random() * 6) + 2; // 2–7
+    } else {
+      A = Math.floor(Math.random() * 6) + 4; // 4–9
+      B = Math.floor(Math.random() * 8) + 2; // 2–9
+    }
+    if (tries > 200) break;
+  } while (A + B <= 10 || A >= 10 || B < 2);
+  const X = 10 - A;
+  const Y = B - X;
+  return { A, B, X, Y, Result: A + B };
+}
+
+function generateTappa() {
+  tappaState.exercises = Array.from({ length: 5 }, () => genTappaOne());
+  tappaState.solved = 0;
+  document.getElementById('vfb-tappa').textContent = '';
+  renderTappa();
+  updateTappaScore();
+}
+
+function renderTappa() {
+  const container = document.getElementById('rows-tappa');
+  container.innerHTML = '';
+  tappaState.exercises.forEach((ex, ri) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'tappa-ex';
+    wrap.id = 'tappa-ex-' + ri;
+
+    // Line 1: Problem  A + B =
+    const row1 = document.createElement('div');
+    row1.className = 't-row';
+    row1.innerHTML =
+      '<span class="t-num">' + ex.A + '</span>' +
+      '<span class="t-op">+</span>' +
+      '<span class="t-num" style="color:#e65100">' + ex.B + '</span>' +
+      '<span class="t-op">=</span>';
+    const inpResult = document.createElement('input');
+    inpResult.type = 'number'; inpResult.inputMode = 'numeric';
+    inpResult.className = 't-inp'; inpResult.id = 'tinp-' + ri + '-res';
+    inpResult.placeholder = '?'; inpResult.autocomplete = 'off';
+    row1.appendChild(inpResult);
+    const rfb = document.createElement('span');
+    rfb.className = 't-rfb'; rfb.id = 'trfb-' + ri;
+    row1.appendChild(rfb);
+    wrap.appendChild(row1);
+
+    // Bridge: SVG + split inputs
+    const bridgeRow = document.createElement('div');
+    bridgeRow.className = 't-bridge-row';
+    bridgeRow.innerHTML =
+      '<svg width="60" height="22" viewBox="0 0 60 22" style="flex-shrink:0;margin-right:4px">' +
+      '<line x1="30" y1="2" x2="8" y2="20" stroke="#f48fb1" stroke-width="2" stroke-dasharray="4,2"/>' +
+      '<line x1="30" y1="2" x2="52" y2="20" stroke="#f48fb1" stroke-width="2" stroke-dasharray="4,2"/>' +
+      '</svg>';
+    const splitDiv = document.createElement('div');
+    splitDiv.className = 't-bridge-split';
+    const inpX = document.createElement('input');
+    inpX.type = 'number'; inpX.inputMode = 'numeric';
+    inpX.className = 't-inp t-inp-sm'; inpX.id = 'tinp-' + ri + '-x';
+    inpX.placeholder = '?'; inpX.autocomplete = 'off';
+    const inpY = document.createElement('input');
+    inpY.type = 'number'; inpY.inputMode = 'numeric';
+    inpY.className = 't-inp t-inp-sm'; inpY.id = 'tinp-' + ri + '-y';
+    inpY.placeholder = '?'; inpY.autocomplete = 'off';
+    splitDiv.appendChild(inpX);
+    splitDiv.appendChild(inpY);
+    bridgeRow.appendChild(splitDiv);
+    wrap.appendChild(bridgeRow);
+
+    // Line 2: A + x_ref + y_ref =
+    const row2 = document.createElement('div');
+    row2.className = 't-row';
+    row2.innerHTML =
+      '<span class="t-num">' + ex.A + '</span>' +
+      '<span class="t-op">+</span>' +
+      '<span class="t-ref" id="tref-' + ri + '-x">_</span>' +
+      '<span class="t-op">+</span>' +
+      '<span class="t-ref" id="tref-' + ri + '-y">_</span>' +
+      '<span class="t-op">=</span>';
+    wrap.appendChild(row2);
+
+    // Line 3: 10 + y_ref2 = result_ref
+    const row3 = document.createElement('div');
+    row3.className = 't-row';
+    row3.innerHTML =
+      '<span class="t-num t-ten">10</span>' +
+      '<span class="t-op">+</span>' +
+      '<span class="t-ref" id="tref2-' + ri + '-y">_</span>' +
+      '<span class="t-op">=</span>' +
+      '<span class="t-ref t-final" id="tref-' + ri + '-res">_</span>';
+    wrap.appendChild(row3);
+    container.appendChild(wrap);
+
+    // Live mirrors
+    inpX.addEventListener('input', () => {
+      const v = parseInt(inpX.value);
+      document.getElementById('tref-' + ri + '-x').textContent = isNaN(v) ? '_' : v;
+      clearTappaErr(ri, 'x', inpX);
+    });
+    inpY.addEventListener('input', () => {
+      const v = parseInt(inpY.value);
+      document.getElementById('tref-' + ri + '-y').textContent = isNaN(v) ? '_' : v;
+      document.getElementById('tref2-' + ri + '-y').textContent = isNaN(v) ? '_' : v;
+      clearTappaErr(ri, 'y', inpY);
+    });
+    inpResult.addEventListener('input', () => {
+      const v = parseInt(inpResult.value);
+      document.getElementById('tref-' + ri + '-res').textContent = isNaN(v) ? '_' : v;
+      clearTappaErr(ri, 'res', inpResult);
+    });
+
+    // Enter navigation
+    [inpX, inpY, inpResult].forEach((inp, pos) => {
+      inp.addEventListener('keydown', e => {
+        if (e.key !== 'Enter') return;
+        const nextInps = [inpX, inpY, inpResult];
+        if (pos < 2) { nextInps[pos + 1].focus(); }
+        else if (ri < 4) { document.getElementById('tinp-' + (ri+1) + '-x').focus(); }
+        else { verifyTappa(); }
+      });
+    });
+  });
+
+  const first = document.getElementById('tinp-0-x');
+  if (first) first.focus();
+}
+
+function clearTappaErr(ri, key, inp) {
+  if (inp.classList.contains('t-err')) {
+    inp.classList.remove('t-err');
+    const wrap = document.getElementById('tappa-ex-' + ri);
+    if (wrap) wrap.classList.remove('t-wrong');
+    const rfb = document.getElementById('trfb-' + ri);
+    if (rfb) rfb.textContent = '';
+  }
+}
+
+function verifyTappa() {
+  let correct = 0;
+  tappaState.exercises.forEach((ex, ri) => {
+    const inpX   = document.getElementById('tinp-' + ri + '-x');
+    const inpY   = document.getElementById('tinp-' + ri + '-y');
+    const inpRes = document.getElementById('tinp-' + ri + '-res');
+    const rfb    = document.getElementById('trfb-' + ri);
+    const wrap   = document.getElementById('tappa-ex-' + ri);
+
+    const vX = parseInt(inpX.value);
+    const vY = parseInt(inpY.value);
+    const vR = parseInt(inpRes.value);
+
+    const okX = !isNaN(vX) && vX === ex.X;
+    const okY = !isNaN(vY) && vY === ex.Y;
+    const okR = !isNaN(vR) && vR === ex.Result;
+
+    inpX.className   = 't-inp t-inp-sm ' + (okX ? 't-ok' : 't-err');
+    inpY.className   = 't-inp t-inp-sm ' + (okY ? 't-ok' : 't-err');
+    inpRes.className = 't-inp '          + (okR ? 't-ok' : 't-err');
+
+    wrap.classList.remove('t-correct', 't-wrong');
+    if (okX && okY && okR) {
+      rfb.textContent = '✅';
+      wrap.classList.add('t-correct');
+      correct++;
+    } else {
+      rfb.textContent = '❌';
+      wrap.classList.add('t-wrong');
+    }
+  });
+
+  tappaState.solved = correct;
+  if (correct === 5) addStreak();
+  updateTappaScore();
+
+  const vfb = document.getElementById('vfb-tappa');
+  if (correct === 5) {
+    vfb.textContent = '🌟 Bravissima Giorgia! Tutti e 5 giusti! 🌸';
+    vfb.style.color = '#2e7d32';
+  } else if (correct === 0) {
+    vfb.textContent = '💪 Nessuno giusto ancora, riprova! 🌸';
+    vfb.style.color = '#c62828';
+  } else {
+    vfb.textContent = `💖 ${correct} su 5 giusti, continua così!`;
+    vfb.style.color = correct >= 3 ? '#2e7d32' : '#e65100';
+  }
+}
+
+function resetTappa() {
+  tappaState.exercises.forEach((ex, ri) => {
+    ['x','y','res'].forEach(k => {
+      const inp = document.getElementById('tinp-' + ri + '-' + k);
+      if (inp) {
+        inp.value = '';
+        inp.className = inp.className.replace(/t-ok|t-err/g, '').trim();
+      }
+    });
+    ['x','y','res'].forEach(k => {
+      const ref = document.getElementById('tref-' + ri + '-' + k);
+      if (ref) ref.textContent = '_';
+    });
+    const ref2y = document.getElementById('tref2-' + ri + '-y');
+    if (ref2y) ref2y.textContent = '_';
+    const rfb = document.getElementById('trfb-' + ri);
+    if (rfb) rfb.textContent = '';
+    const wrap = document.getElementById('tappa-ex-' + ri);
+    if (wrap) wrap.classList.remove('t-correct', 't-wrong');
+  });
+  document.getElementById('vfb-tappa').textContent = '';
+}
+
+function updateTappaScore() {
+  document.getElementById('score-tappa').textContent  = `🌸 ${tappaState.solved} / 5`;
+  document.getElementById('streak-tappa').textContent = `🌟 Serie: ${globalStreak}`;
+}
+
+
 generateAll('plus2');
 generateAll('plus5');
 generateAll('tens');
 generateAll('mix');
+generateTappa();
 CP=cGenerate();cRender();
 </script>
 </body>

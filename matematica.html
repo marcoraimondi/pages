@@ -1078,7 +1078,12 @@ function genTappaOne() {
 }
 
 function generateTappa() {
-  tappaState.exercises = Array.from({ length: 5 }, () => genTappaOne());
+  const exs = [], usedA = new Set();
+  while (exs.length < 5) {
+    const e = genTappaOne();
+    if (!usedA.has(e.A)) { usedA.add(e.A); exs.push(e); }
+  }
+  tappaState.exercises = exs;
   tappaState.solved = 0;
   document.getElementById('vfb-tappa').textContent = '';
   renderTappa();
@@ -1311,7 +1316,12 @@ function genTappaMinusOne() {
 }
 
 function generateTappaMinus() {
-  tappaMinusState.exercises = Array.from({ length: 5 }, () => genTappaMinusOne());
+  const exs = [], usedA = new Set();
+  while (exs.length < 5) {
+    const e = genTappaMinusOne();
+    if (!usedA.has(e.A)) { usedA.add(e.A); exs.push(e); }
+  }
+  tappaMinusState.exercises = exs;
   tappaMinusState.solved = 0;
   document.getElementById('vfb-tappa-minus').textContent = '';
   renderTappaMinus();
@@ -1499,6 +1509,7 @@ const tappaMixState = { exercises: [], solved: 0 };
 
 function generateTappaMix() {
   const exs = [];
+  const usedA = new Set();
   // Ensure at least 2 of each type in 5 exercises
   const types = ['plus','plus','minus','minus', Math.random() < 0.5 ? 'plus' : 'minus'];
   // Shuffle
@@ -1507,15 +1518,14 @@ function generateTappaMix() {
     [types[i], types[j]] = [types[j], types[i]];
   }
   types.forEach(t => {
-    if (t === 'plus') {
-      const e = genTappaOne();
-      e.type = 'plus';
-      exs.push(e);
-    } else {
-      const e = genTappaMinusOne();
-      e.type = 'minus';
-      exs.push(e);
-    }
+    let e, tries = 0;
+    do {
+      e = t === 'plus' ? genTappaOne() : genTappaMinusOne();
+      tries++;
+    } while (usedA.has(e.A) && tries < 200);
+    e.type = t;
+    usedA.add(e.A);
+    exs.push(e);
   });
   tappaMixState.exercises = exs;
   tappaMixState.solved = 0;

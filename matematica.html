@@ -423,25 +423,50 @@ input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
 .t-inp.t-err { border-style: solid; border-color: #c62828 !important; background: #ffebee !important; color: #c62828; }
 input[type=number].t-inp::-webkit-inner-spin-button,
 input[type=number].t-inp::-webkit-outer-spin-button { -webkit-appearance: none; }
-/* Bridge visual (Lambda up / V down) */
-.t-bridge-up {
-  display: flex;
-  justify-content: center;
-  margin: 0 0 2px 30px; /* allinea approssimativamente sotto B */
+/* ── Tappa alla Decina: CSS Grid ── */
+.tappa-grid {
+  display: grid;
+  grid-template-columns: 46px 22px 46px 22px 46px 22px 46px;
+  grid-template-rows: 36px 26px 36px 26px 36px;
+  column-gap: 3px;
+  row-gap: 2px;
+  align-items: center;
+  justify-items: center;
+  margin: 4px 0;
 }
-.t-bridge-down {
-  display: flex;
-  justify-content: center;
-  margin: 0 0 2px 0;
-}
-.t-bnum { color: #e65100 !important; }
-.t-rfb {
+.tg-num {
   font-size: 18px;
-  min-width: 24px;
-  text-align: center;
-  margin-left: auto;
-  padding-left: 4px;
+  font-weight: 900;
+  color: #222;
 }
+.tg-bnum { color: #e65100 !important; }
+.tg-op {
+  font-size: 15px;
+  font-weight: 800;
+  color: #d81b60;
+}
+.tg-inp {
+  width: 44px;
+  height: 34px;
+  border-radius: 10px;
+  border: 2px dashed #f48fb1;
+  background: #fff0f7;
+  font-size: 16px;
+  font-weight: 800;
+  font-family: inherit;
+  text-align: center;
+  outline: none;
+  color: #d81b60;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+.tg-inp:focus { border-color: #d81b60; background: #fce4ec; border-style: solid; }
+.tg-inp.tg-ok  { border-style:solid; border-color:#2e7d32 !important; background:#e8f5e9 !important; color:#2e7d32; }
+.tg-inp.tg-err { border-style:solid; border-color:#c62828 !important; background:#ffebee !important; color:#c62828; }
+input[type=number].tg-inp::-webkit-inner-spin-button,
+input[type=number].tg-inp::-webkit-outer-spin-button { -webkit-appearance: none; }
+.tg-rfb { font-size:18px; justify-self:start; }
+.tg-bridge { display:flex; align-items:center; justify-content:center; width:100%; }
 </style>
 </head>
 <body>
@@ -1019,66 +1044,97 @@ function generateTappa() {
 }
 
 
+
 function renderTappa() {
   const container = document.getElementById('rows-tappa');
   container.innerHTML = '';
+
   tappaState.exercises.forEach((ex, ri) => {
     const wrap = document.createElement('div');
     wrap.className = 'tappa-ex';
     wrap.id = 'tappa-ex-' + ri;
 
-    // Riga 1: A + B = (dato, nessun input)
-    const row1 = document.createElement('div');
-    row1.className = 't-row';
-    row1.innerHTML =
-      '<span class="t-num">' + ex.A + '</span>' +
-      '<span class="t-op">+</span>' +
-      '<span class="t-num t-bnum">' + ex.B + '</span>' +
-      '<span class="t-op">=</span>' +
-      '<span class="t-rfb" id="trfb-' + ri + '"></span>';
-    wrap.appendChild(row1);
+    const grid = document.createElement('div');
+    grid.className = 'tappa-grid';
 
-    // Bridge Lambda: B si spacca in X e Y
-    const bUp = document.createElement('div');
-    bUp.className = 't-bridge-up';
-    bUp.innerHTML =
-      '<svg width="80" height="20" viewBox="0 0 80 20">' +
-      '<line x1="40" y1="18" x2="12" y2="2" stroke="#e65100" stroke-width="2" stroke-dasharray="4,2"/>' +
-      '<line x1="40" y1="18" x2="68" y2="2" stroke="#e65100" stroke-width="2" stroke-dasharray="4,2"/>' +
-      '</svg>';
-    wrap.appendChild(bUp);
+    // ── helpers ──────────────────────────────────────────
+    const span = (cls, txt) => {
+      const s = document.createElement('span');
+      s.className = cls;
+      if (txt !== undefined) s.textContent = txt;
+      return s;
+    };
+    const mkInp = (key) => {
+      const i = document.createElement('input');
+      i.type = 'number'; i.inputMode = 'numeric';
+      i.className = 'tg-inp';
+      i.id = 'tinp-' + ri + '-' + key;
+      i.placeholder = '?'; i.autocomplete = 'off';
+      return i;
+    };
+    // place element in CSS Grid (1-indexed col, row; optional colSpan)
+    const place = (el, col, row, colSpan) => {
+      el.style.gridColumn = colSpan ? col + ' / span ' + colSpan : String(col);
+      el.style.gridRow = String(row);
+      return el;
+    };
+    // SVG bridge: cols 3-5 (Lambda) or cols 1-3 (V), width=120px
+    // Lambda: apex at center top, legs to col3-center and col5-center
+    // V:      left arm from col1-center, right arm from col3-center, converge at center bottom
+    const bridgeSvg = (type) => {
+      const div = document.createElement('div');
+      div.className = 'tg-bridge';
+      // col-gap=3, track widths 46,22,46 → span width = 46+3+22+3+46 = 120px
+      // centers: col1(within span)=23, col3(within span)=97, midpoint=60
+      const c1 = 23, c3 = 97, mid = 60;
+      const lines = type === 'lambda'
+        ? `<line x1="${mid}" y1="2" x2="${c1}" y2="24" stroke="#e65100" stroke-width="2.5" stroke-dasharray="5,3" stroke-linecap="round"/>` +
+          `<line x1="${mid}" y1="2" x2="${c3}" y2="24" stroke="#e65100" stroke-width="2.5" stroke-dasharray="5,3" stroke-linecap="round"/>`
+        : `<line x1="${c1}" y1="2" x2="${mid}" y2="24" stroke="#1565c0" stroke-width="2.5" stroke-dasharray="5,3" stroke-linecap="round"/>` +
+          `<line x1="${c3}" y1="2" x2="${mid}" y2="24" stroke="#1565c0" stroke-width="2.5" stroke-dasharray="5,3" stroke-linecap="round"/>`;
+      div.innerHTML = `<svg width="120" height="26" viewBox="0 0 120 26">${lines}</svg>`;
+      return div;
+    };
 
-    // Riga 2: [a_copy] + [x] + [y] =  (tutti input)
-    const row2 = document.createElement('div');
-    row2.className = 't-row';
-    const inpA = tMkInp(ri, 'a');
-    const inpX = tMkInp(ri, 'x');
-    const inpY = tMkInp(ri, 'y');
-    [inpA, tOp('+'), inpX, tOp('+'), inpY, tOp('=')].forEach(el => row2.appendChild(el));
-    wrap.appendChild(row2);
+    // ── ROW 1: A + B = rfb ──────────────────────────────
+    grid.appendChild(place(span('tg-num', ex.A),          1, 1));
+    grid.appendChild(place(span('tg-op', '+'),             2, 1));
+    grid.appendChild(place(span('tg-num tg-bnum', ex.B),  3, 1));
+    grid.appendChild(place(span('tg-op', '='),             4, 1));
+    const rfb = span('tg-rfb'); rfb.id = 'trfb-' + ri;
+    grid.appendChild(place(rfb, 5, 1, 3));
 
-    // Bridge V: A + X convergono a 10
-    const bDown = document.createElement('div');
-    bDown.className = 't-bridge-down';
-    bDown.innerHTML =
-      '<svg width="80" height="20" viewBox="0 0 80 20">' +
-      '<line x1="12" y1="2" x2="40" y2="18" stroke="#1565c0" stroke-width="2" stroke-dasharray="4,2"/>' +
-      '<line x1="68" y1="2" x2="40" y2="18" stroke="#1565c0" stroke-width="2" stroke-dasharray="4,2"/>' +
-      '</svg>';
-    wrap.appendChild(bDown);
+    // ── ROW 2: Lambda bridge (cols 3-5) ─────────────────
+    grid.appendChild(place(bridgeSvg('lambda'), 3, 2, 3));
 
-    // Riga 3: [ten] + [y2] = [res]  (tutti input)
-    const row3 = document.createElement('div');
-    row3.className = 't-row';
-    const inpTen = tMkInp(ri, 'ten');
-    const inpY2  = tMkInp(ri, 'y2');
-    const inpRes = tMkInp(ri, 'res');
-    [inpTen, tOp('+'), inpY2, tOp('='), inpRes].forEach(el => row3.appendChild(el));
-    wrap.appendChild(row3);
+    // ── ROW 3: [inpA] + [inpX] + [inpY] = ──────────────
+    const inpA = mkInp('a');
+    const inpX = mkInp('x');
+    const inpY = mkInp('y');
+    grid.appendChild(place(inpA,                  1, 3));
+    grid.appendChild(place(span('tg-op', '+'),    2, 3));
+    grid.appendChild(place(inpX,                  3, 3));
+    grid.appendChild(place(span('tg-op', '+'),    4, 3));
+    grid.appendChild(place(inpY,                  5, 3));
+    grid.appendChild(place(span('tg-op', '='),    6, 3));
 
+    // ── ROW 4: V bridge (cols 1-3) ──────────────────────
+    grid.appendChild(place(bridgeSvg('v'), 1, 4, 3));
+
+    // ── ROW 5: [inpTen] + [inpY2] = [inpRes] ───────────
+    const inpTen = mkInp('ten');
+    const inpY2  = mkInp('y2');
+    const inpRes = mkInp('res');
+    grid.appendChild(place(inpTen,                1, 5));
+    grid.appendChild(place(span('tg-op', '+'),    2, 5));
+    grid.appendChild(place(inpY2,                 3, 5));
+    grid.appendChild(place(span('tg-op', '='),    4, 5));
+    grid.appendChild(place(inpRes,                5, 5));
+
+    wrap.appendChild(grid);
     container.appendChild(wrap);
 
-    // Enter navigation: a → x → y → ten → y2 → res → next exercise
+    // ── Enter navigation ─────────────────────────────────
     const all = [inpA, inpX, inpY, inpTen, inpY2, inpRes];
     all.forEach((inp, pos) => {
       inp.addEventListener('keydown', e => {
@@ -1090,37 +1146,25 @@ function renderTappa() {
         } else { verifyTappa(); }
       });
       inp.addEventListener('input', () => {
-        if (inp.classList.contains('t-err')) {
-          inp.classList.remove('t-err');
-          const rfb = document.getElementById('trfb-' + ri);
-          if (rfb) rfb.textContent = '';
+        if (inp.classList.contains('tg-err')) {
+          inp.classList.remove('tg-err');
+          const rfb2 = document.getElementById('trfb-' + ri);
+          if (rfb2) rfb2.textContent = '';
           const w = document.getElementById('tappa-ex-' + ri);
           if (w) w.classList.remove('t-wrong');
         }
       });
     });
   });
+
   const first = document.getElementById('tinp-0-a');
   if (first) first.focus();
-}
-
-function tMkInp(ri, key) {
-  const inp = document.createElement('input');
-  inp.type = 'number'; inp.inputMode = 'numeric';
-  inp.className = 't-inp';
-  inp.id = 'tinp-' + ri + '-' + key;
-  inp.placeholder = '?'; inp.autocomplete = 'off';
-  return inp;
-}
-function tOp(txt) {
-  const s = document.createElement('span');
-  s.className = 't-op'; s.textContent = txt; return s;
 }
 
 function verifyTappa() {
   let correct = 0;
   tappaState.exercises.forEach((ex, ri) => {
-    const get = k => document.getElementById('tinp-' + ri + '-' + k);
+    const get  = k => document.getElementById('tinp-' + ri + '-' + k);
     const inpA = get('a'), inpX = get('x'), inpY = get('y');
     const inpTen = get('ten'), inpY2 = get('y2'), inpRes = get('res');
     const rfb  = document.getElementById('trfb-' + ri);
@@ -1136,7 +1180,7 @@ function verifyTappa() {
     const okY2  = !isNaN(vY2)  && vY2  === ex.Y;
     const okRes = !isNaN(vRes) && vRes === ex.Result;
 
-    const sc = (inp, ok) => { inp.className = 't-inp ' + (ok ? 't-ok' : 't-err'); };
+    const sc = (inp, ok) => { inp.className = 'tg-inp ' + (ok ? 'tg-ok' : 'tg-err'); };
     sc(inpA, okA); sc(inpX, okX); sc(inpY, okY);
     sc(inpTen, okTen); sc(inpY2, okY2); sc(inpRes, okRes);
 
@@ -1174,7 +1218,7 @@ function resetTappa() {
       const inp = document.getElementById('tinp-' + ri + '-' + k);
       if (!inp) return;
       inp.value = '';
-      inp.className = 't-inp';
+      inp.className = 'tg-inp';
     });
     const rfb = document.getElementById('trfb-' + ri);
     if (rfb) rfb.textContent = '';

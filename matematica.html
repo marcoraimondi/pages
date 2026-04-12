@@ -665,11 +665,11 @@ const exState = {
   mix:   { exercises: [], solved: 0, streak: 0 },
 };
 
-function genOne(type) {
-  // Mix: scegli un sottotipo casuale tra i tre
+function genOne(type, forceSubtype) {
+  // Mix: scegli un sottotipo casuale tra i tre (o usa quello forzato)
   if (type === 'mix') {
     const subtypes = ['plus2', 'plus5', 'tens'];
-    type = subtypes[Math.floor(Math.random() * 3)];
+    type = forceSubtype || subtypes[Math.floor(Math.random() * 3)];
   }
 
   // Direzione: probabilità crescente in base alla difficoltà
@@ -717,7 +717,34 @@ function genOne(type) {
 
 function generateAll(type) {
   const s = exState[type];
-  s.exercises = Array.from({ length: 5 }, () => genOne(type));
+  const exs = [], seen = new Set();
+  let guard = 0;
+
+  if (type === 'mix') {
+    // Garantisce almeno 1 esercizio per ogni sottotipo
+    const mandatory = ['plus2', 'plus5', 'tens'];
+    const extra = ['plus2', 'plus5', 'tens'];
+    const subtypes = [...mandatory, extra[Math.floor(Math.random() * 3)], extra[Math.floor(Math.random() * 3)]];
+    // Shuffle subtypes
+    for (let i = subtypes.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [subtypes[i], subtypes[j]] = [subtypes[j], subtypes[i]];
+    }
+    for (const st of subtypes) {
+      let e, tries = 0;
+      do { e = genOne('mix', st); tries++; } while (seen.has(e.nums.join(',')) && tries < 200);
+      seen.add(e.nums.join(','));
+      exs.push(e);
+    }
+  } else {
+    while (exs.length < 5 && guard++ < 500) {
+      const e = genOne(type);
+      const key = e.nums.join(',');
+      if (!seen.has(key)) { seen.add(key); exs.push(e); }
+    }
+  }
+
+  s.exercises = exs;
   s.solved = 0;
   s.streak = 0;
   updateScore(type);

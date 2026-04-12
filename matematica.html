@@ -486,9 +486,10 @@ input[type=number].tg-inp::-webkit-outer-spin-button { -webkit-appearance: none;
   <button class="nav-btn" onclick="showSection('plus2',this)">🌸 +2 / −2</button>
   <button class="nav-btn" onclick="showSection('plus5',this)">🦋 +5 / −5</button>
   <button class="nav-btn" onclick="showSection('tens',this)">💫 Decine</button>
-  <button class="nav-btn" onclick="showSection('mix',this)">🎀 Mix</button>
+  <button class="nav-btn" onclick="showSection('mix',this)">🎀 Serie Mix</button>
   <button class="nav-btn" onclick="showSection('tappa',this)">➕ Tappa +</button>
   <button class="nav-btn" onclick="showSection('tappa-minus',this)">➖ Tappa −</button>
+  <button class="nav-btn" onclick="showSection('tappa-mix',this)">🔀 Tappa Mix</button>
 </nav>
 
 <!-- ── CRUCIVERBA ── -->
@@ -571,7 +572,7 @@ input[type=number].tg-inp::-webkit-outer-spin-button { -webkit-appearance: none;
 <!-- ── MIX ── -->
 <div id="section-mix" class="section">
   <div class="card">
-    <h2>🎀 Mix — Tutte le Serie</h2>
+    <h2>🎀 Serie Mix — Tutte le Operazioni</h2>
     <div class="score-bar">
       <span class="streak-badge" id="streak-mix">🌟 Serie: 0</span>
       <span class="score-badge" id="score-mix">🌸 0 / 5</span>
@@ -620,6 +621,25 @@ input[type=number].tg-inp::-webkit-outer-spin-button { -webkit-appearance: none;
       <button class="btn btn-primary verify-btn" onclick="verifyTappaMinus()">Verifica</button>
       <button class="btn btn-secondary" onclick="resetTappaMinus()">Ricomincia</button>
       <button class="btn btn-secondary new-btn" onclick="generateTappaMinus()">Nuovo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TAPPA MIX ── -->
+<div id="section-tappa-mix" class="section">
+  <div class="card">
+    <h2>🔀 Tappa Mix (+ e −)</h2>
+    <div class="score-bar">
+      <span class="streak-badge" id="streak-tappa-mix">🌟 Serie: 0</span>
+      <span class="score-badge" id="score-tappa-mix">🌸 0 / 5</span>
+    </div>
+    <p style="text-align:center;font-size:12px;color:#888;margin-bottom:12px;">Addizioni e sottrazioni con tappa alla decina — miste! 🔀</p>
+    <div id="rows-tappa-mix"></div>
+    <div class="verify-feedback" id="vfb-tappa-mix"></div>
+    <div class="bottom-bar">
+      <button class="btn btn-primary verify-btn" onclick="verifyTappaMix()">Verifica</button>
+      <button class="btn btn-secondary" onclick="resetTappaMix()">Ricomincia</button>
+      <button class="btn btn-secondary new-btn" onclick="generateTappaMix()">Nuovo</button>
     </div>
   </div>
 </div>
@@ -880,6 +900,7 @@ function setDifficulty(d, btn) {
   generateAll('mix');
   generateTappa();
   generateTappaMinus();
+  generateTappaMix();
   CP = cGenerate(); cRender();
 }
 
@@ -890,7 +911,7 @@ let globalStreak = 0;
 
 function addStreak() {
   globalStreak++;
-  ['plus2','plus5','tens','mix','cross','tappa','tappa-minus'].forEach(id => {
+  ['plus2','plus5','tens','mix','cross','tappa','tappa-minus','tappa-mix'].forEach(id => {
     const el = document.getElementById('streak-' + id);
     if (el) el.textContent = '🌟 Serie: ' + globalStreak;
   });
@@ -1471,12 +1492,239 @@ function updateTappaMinusScore() {
   document.getElementById('streak-tappa-minus').textContent = '🌟 Serie: ' + globalStreak;
 }
 
+/* ════════════════════════════
+   TAPPA MIX (+ e −)
+════════════════════════════ */
+const tappaMixState = { exercises: [], solved: 0 };
+
+function generateTappaMix() {
+  const exs = [];
+  // Ensure at least 2 of each type in 5 exercises
+  const types = ['plus','plus','minus','minus', Math.random() < 0.5 ? 'plus' : 'minus'];
+  // Shuffle
+  for (let i = types.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [types[i], types[j]] = [types[j], types[i]];
+  }
+  types.forEach(t => {
+    if (t === 'plus') {
+      const e = genTappaOne();
+      e.type = 'plus';
+      exs.push(e);
+    } else {
+      const e = genTappaMinusOne();
+      e.type = 'minus';
+      exs.push(e);
+    }
+  });
+  tappaMixState.exercises = exs;
+  tappaMixState.solved = 0;
+  document.getElementById('vfb-tappa-mix').textContent = '';
+  renderTappaMix();
+  updateTappaMixScore();
+}
+
+function renderTappaMix() {
+  const container = document.getElementById('rows-tappa-mix');
+  container.innerHTML = '';
+
+  tappaMixState.exercises.forEach((ex, ri) => {
+    const isPlus = ex.type === 'plus';
+    const op     = isPlus ? '+' : '−';
+    const opRow3 = isPlus ? '+' : '−';
+    const opRow5 = isPlus ? '+' : '−';
+
+    const wrap = document.createElement('div');
+    wrap.className = 'tappa-ex';
+    wrap.id = 'tmix-ex-' + ri;
+
+    const grid = document.createElement('div');
+    grid.className = 'tappa-grid';
+
+    const span = (cls, txt) => {
+      const s = document.createElement('span');
+      s.className = cls; if (txt !== undefined) s.textContent = txt; return s;
+    };
+    const mkInp = (key) => {
+      const i = document.createElement('input');
+      i.type = 'number'; i.inputMode = 'numeric';
+      i.className = 'tg-inp';
+      i.id = 'tmixinp-' + ri + '-' + key;
+      i.placeholder = '?'; i.autocomplete = 'off'; return i;
+    };
+    const place = (el, col, row, colSpan) => {
+      el.style.gridColumn = colSpan ? col + ' / span ' + colSpan : String(col);
+      el.style.gridRow = String(row); return el;
+    };
+    const bridgeSvg = (type) => {
+      const div = document.createElement('div');
+      div.className = 'tg-bridge';
+      const c1 = 23, c2 = 72, c3 = 121;
+      const lines = type === 'lambda'
+        ? `<line x1="${c2}" y1="2" x2="${c1}" y2="24" stroke="#e65100" stroke-width="2.5" stroke-dasharray="5,3" stroke-linecap="round"/>` +
+          `<line x1="${c2}" y1="2" x2="${c3}" y2="24" stroke="#e65100" stroke-width="2.5" stroke-dasharray="5,3" stroke-linecap="round"/>`
+        : `<line x1="${c1}" y1="2" x2="${c2}" y2="24" stroke="#1565c0" stroke-width="2.5" stroke-dasharray="5,3" stroke-linecap="round"/>` +
+          `<line x1="${c3}" y1="2" x2="${c2}" y2="24" stroke="#1565c0" stroke-width="2.5" stroke-dasharray="5,3" stroke-linecap="round"/>`;
+      div.innerHTML = `<svg width="144" height="26" viewBox="0 0 144 26">${lines}</svg>`;
+      return div;
+    };
+
+    // ROW 1: A op B =
+    grid.appendChild(place(span('tg-num', ex.A),           1, 1));
+    grid.appendChild(place(span('tg-op', op),               2, 1));
+    grid.appendChild(place(span('tg-num tg-bnum', ex.B),   4, 1));
+    grid.appendChild(place(span('tg-op', '='),              6, 1));
+    const rfb = span('tg-rfb'); rfb.id = 'tmixrfb-' + ri;
+    grid.appendChild(place(rfb, 7, 1));
+
+    // ROW 2: lambda bridge
+    grid.appendChild(place(bridgeSvg('lambda'), 3, 2, 3));
+
+    // ROW 3: inpA op inpP1 op inpP2 =
+    const inpA  = mkInp('a');
+    const inpP1 = mkInp('p1');
+    const inpP2 = mkInp('p2');
+    grid.appendChild(place(inpA,                      1, 3));
+    grid.appendChild(place(span('tg-op', opRow3),     2, 3));
+    grid.appendChild(place(inpP1,                     3, 3));
+    grid.appendChild(place(span('tg-op', opRow3),     4, 3));
+    grid.appendChild(place(inpP2,                     5, 3));
+    grid.appendChild(place(span('tg-op', '='),        6, 3));
+
+    // ROW 4: V bridge
+    grid.appendChild(place(bridgeSvg('v'), 1, 4, 3));
+
+    // ROW 5: inpTen op inpP2c = inpRes
+    const inpTen = mkInp('ten');
+    const inpP2c = mkInp('p2c');
+    const inpRes = mkInp('res');
+    grid.appendChild(place(inpTen,                    2, 5));
+    grid.appendChild(place(span('tg-op', opRow5),     3, 5));
+    grid.appendChild(place(inpP2c,                    5, 5));
+    grid.appendChild(place(span('tg-op', '='),        6, 5));
+    grid.appendChild(place(inpRes,                    7, 5));
+
+    wrap.appendChild(grid);
+    container.appendChild(wrap);
+
+    // Enter nav
+    const all = [inpA, inpP1, inpP2, inpTen, inpP2c, inpRes];
+    all.forEach((inp, pos) => {
+      inp.addEventListener('keydown', e => {
+        if (e.key !== 'Enter') return;
+        if (pos < 5) { all[pos + 1].focus(); }
+        else if (ri < 4) {
+          const nxt = document.getElementById('tmixinp-' + (ri + 1) + '-a');
+          if (nxt) nxt.focus();
+        } else { verifyTappaMix(); }
+      });
+      inp.addEventListener('input', () => {
+        if (inp.classList.contains('tg-err')) {
+          inp.classList.remove('tg-err');
+          const rfb2 = document.getElementById('tmixrfb-' + ri);
+          if (rfb2) rfb2.textContent = '';
+          const w = document.getElementById('tmix-ex-' + ri);
+          if (w) w.classList.remove('t-wrong');
+        }
+      });
+    });
+  });
+
+  const first = document.getElementById('tmixinp-0-a');
+  if (first) first.focus();
+}
+
+function verifyTappaMix() {
+  let correct = 0;
+  tappaMixState.exercises.forEach((ex, ri) => {
+    const isPlus = ex.type === 'plus';
+    const get = k => document.getElementById('tmixinp-' + ri + '-' + k);
+    const inpA = get('a'), inpP1 = get('p1'), inpP2 = get('p2');
+    const inpTen = get('ten'), inpP2c = get('p2c'), inpRes = get('res');
+    const rfb  = document.getElementById('tmixrfb-' + ri);
+    const wrap = document.getElementById('tmix-ex-' + ri);
+
+    const vA   = parseInt(inpA.value);
+    const vP1  = parseInt(inpP1.value), vP2  = parseInt(inpP2.value);
+    const vTen = parseInt(inpTen.value), vP2c = parseInt(inpP2c.value);
+    const vRes = parseInt(inpRes.value);
+
+    let expA, expP1, expP2, expRes;
+    if (isPlus) {
+      expA   = ex.A;
+      expP1  = ex.X;  // part to reach 10
+      expP2  = ex.Y;  // remainder
+      expRes = ex.Result;
+    } else {
+      expA   = ex.A;
+      expP1  = ex.B1;
+      expP2  = ex.B2;
+      expRes = ex.Result;
+    }
+
+    const okA   = !isNaN(vA)   && vA   === expA;
+    const okP1  = !isNaN(vP1)  && vP1  === expP1;
+    const okP2  = !isNaN(vP2)  && vP2  === expP2;
+    const okTen = !isNaN(vTen) && vTen === 10;
+    const okP2c = !isNaN(vP2c) && vP2c === expP2;
+    const okRes = !isNaN(vRes) && vRes === expRes;
+
+    const sc = (inp, ok) => { inp.className = 'tg-inp ' + (ok ? 'tg-ok' : 'tg-err'); };
+    sc(inpA, okA); sc(inpP1, okP1); sc(inpP2, okP2);
+    sc(inpTen, okTen); sc(inpP2c, okP2c); sc(inpRes, okRes);
+
+    wrap.classList.remove('t-correct', 't-wrong');
+    if (okA && okP1 && okP2 && okTen && okP2c && okRes) {
+      rfb.textContent = '✅'; wrap.classList.add('t-correct'); correct++;
+    } else {
+      rfb.textContent = '❌'; wrap.classList.add('t-wrong');
+    }
+  });
+
+  tappaMixState.solved = correct;
+  if (correct === 5) addStreak();
+  updateTappaMixScore();
+
+  const vfb = document.getElementById('vfb-tappa-mix');
+  if (correct === 5) {
+    vfb.textContent = '🌟 Bravissima Giorgia! Tutti e 5 giusti! 🌸';
+    vfb.style.color = '#2e7d32';
+  } else if (correct === 0) {
+    vfb.textContent = '💪 Nessuno giusto ancora, riprova! 🌸';
+    vfb.style.color = '#c62828';
+  } else {
+    vfb.textContent = '💖 ' + correct + ' su 5 giusti, continua così!';
+    vfb.style.color = correct >= 3 ? '#2e7d32' : '#e65100';
+  }
+}
+
+function resetTappaMix() {
+  tappaMixState.exercises.forEach((ex, ri) => {
+    ['a','p1','p2','ten','p2c','res'].forEach(k => {
+      const inp = document.getElementById('tmixinp-' + ri + '-' + k);
+      if (!inp) return;
+      inp.value = ''; inp.className = 'tg-inp';
+    });
+    const rfb = document.getElementById('tmixrfb-' + ri);
+    if (rfb) rfb.textContent = '';
+    const wrap = document.getElementById('tmix-ex-' + ri);
+    if (wrap) wrap.classList.remove('t-correct', 't-wrong');
+  });
+  document.getElementById('vfb-tappa-mix').textContent = '';
+}
+
+function updateTappaMixScore() {
+  document.getElementById('score-tappa-mix').textContent  = '🌸 ' + tappaMixState.solved + ' / 5';
+  document.getElementById('streak-tappa-mix').textContent = '🌟 Serie: ' + globalStreak;
+}
+
 generateAll('plus2');
 generateAll('plus5');
 generateAll('tens');
 generateAll('mix');
 generateTappa();
 generateTappaMinus();
+generateTappaMix();
 CP=cGenerate();cRender();
 </script>
 </body>

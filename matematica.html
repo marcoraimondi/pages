@@ -1106,9 +1106,11 @@ function genTappaOne() {
 
 function generateTappa() {
   const exs = [], usedA = new Set();
+  let guard = 0;
   while (exs.length < 5) {
     const e = genTappaOne();
-    if (!usedA.has(e.A)) { usedA.add(e.A); exs.push(e); }
+    guard++;
+    if (!usedA.has(e.A) || guard > 300) { usedA.add(e.A); exs.push(e); }
   }
   tappaState.exercises = exs;
   tappaState.solved = 0;
@@ -1344,9 +1346,11 @@ function genTappaMinusOne() {
 
 function generateTappaMinus() {
   const exs = [], usedA = new Set();
+  let guard = 0;
   while (exs.length < 5) {
     const e = genTappaMinusOne();
-    if (!usedA.has(e.A)) { usedA.add(e.A); exs.push(e); }
+    guard++;
+    if (!usedA.has(e.A) || guard > 300) { usedA.add(e.A); exs.push(e); }
   }
   tappaMinusState.exercises = exs;
   tappaMinusState.solved = 0;

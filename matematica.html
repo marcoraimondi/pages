@@ -1088,10 +1088,10 @@ function genTappaOne() {
   do {
     tries++;
     if (difficulty === 'easy') {
-      A = Math.floor(Math.random() * 3) + 7; // 7–9
+      A = Math.floor(Math.random() * 5) + 5; // 5–9
       B = Math.floor(Math.random() * 5) + 2; // 2–6
     } else if (difficulty === 'medium') {
-      A = Math.floor(Math.random() * 4) + 6; // 6–9
+      A = Math.floor(Math.random() * 5) + 5; // 5–9
       B = Math.floor(Math.random() * 6) + 2; // 2–7
     } else {
       A = Math.floor(Math.random() * 6) + 4; // 4–9
@@ -1323,8 +1323,8 @@ function genTappaMinusOne() {
   do {
     tries++;
     if (difficulty === 'easy') {
-      A = Math.floor(Math.random() * 3) + 11; // 11–13
-      B = Math.floor(Math.random() * 3) + 2;  // 2–4
+      A = Math.floor(Math.random() * 5) + 11; // 11–15
+      B = Math.floor(Math.random() * 5) + 2;  // 2–6
     } else if (difficulty === 'medium') {
       A = Math.floor(Math.random() * 6) + 11; // 11–16
       B = Math.floor(Math.random() * 6) + 2;  // 2–7

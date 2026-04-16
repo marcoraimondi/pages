@@ -121,7 +121,7 @@ function unlock(){
         +'body.dark .hero-kicker{color:#666!important}'
         +'body.dark .hero-sub{color:#9a9a9c!important}'
         +'body.dark .typing-dot{background:#9a9a9c!important}'
-        +'body.dark .demo-title{color:#9a9a9c!important}';
+        +'body.dark .demo-title{color:#9a9a9c!important}'+'body.dark #pv-body path{fill:rgba(200,200,200,.65)!important}'+'body.dark #pv-body [style*="color:#444"]{color:#9a9a9c!important}'+'body.dark #pv-body>div[style*="opacity"]{opacity:.85!important}';
       const injectStyle='<style id="init-palette">:root{--rust:'+p.rust+';--brown:'+p.brown+';--espresso:'+p.espresso+';--cream:'+p.cream+';--light:'+p.light+';--on-rust:'+(p.onRust||'#ffffff')+'}'+baseDmCss+darkCss+'</style>';
       const injectScript='<scr'+'ipt>'
         +'window.__IP__="'+sp+'";window.__IN__="'+sn+'";window.BOT_NAME="'+sn+'";window.__DK__='+(sd?'true':'false')+';'

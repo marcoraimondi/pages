@@ -479,8 +479,16 @@ input[type=number].tg-inp::-webkit-outer-spin-button { -webkit-appearance: none;
   font-variant-numeric: tabular-nums;
   min-width: 72px;
   text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s, visibility 0.4s;
 }
-.timer-badge.running { background: #e8f5e9; color: #2e7d32; }
+.timer-badge.running {
+  background: #e8f5e9;
+  color: #2e7d32;
+  opacity: 1;
+  visibility: visible;
+}
 
 /* ── CLASSIFICA ── */
 .rank-wrap { padding: 4px 0 8px; }
@@ -816,7 +824,7 @@ function generateAll(type) {
   updateScore(type);
   document.getElementById('vfb-' + type).textContent = '';
   renderRows(type);
-  timerStart(type);
+  timerArm(type);
 }
 
 function resetAll(type) {
@@ -862,6 +870,7 @@ function renderRows(type) {
         inp.id = `inp-${type}-${ri}-${pos}`;
         inp.placeholder = '?';
         inp.autocomplete = 'off';
+        inp.addEventListener('focus', () => timerFirstTouch(type));
         inp.addEventListener('keydown', e => {
           if (e.key === 'Enter') {
             if (pos === 0) {
@@ -1059,6 +1068,7 @@ function cMakeNum(name) {
     const i=document.createElement('input');
     i.type='number';i.inputMode='numeric';i.pattern='[0-9]*';
     i.id='cc_'+name;i.autocomplete='off';i.min='1';i.max='20';
+    i.addEventListener('focus', () => timerFirstTouch('cross'));
     i.addEventListener('focus',cClearFb);
     d.appendChild(i);
   } else {
@@ -1151,7 +1161,7 @@ function cNew() {
   document.getElementById('cfeedback').textContent='';
   document.getElementById('cfeedback').className='cruci-feedback';
   CP=cGenerate();cRender();
-  timerStart('cross');
+  timerArm('cross');
 }
 
 /* ════════════════════════════
@@ -1193,7 +1203,7 @@ function generateTappa() {
   document.getElementById('vfb-tappa').textContent = '';
   renderTappa();
   updateTappaScore();
-  timerStart('tappa');
+  timerArm('tappa');
 }
 
 
@@ -1291,6 +1301,7 @@ function renderTappa() {
 
     // ── Enter navigation ─────────────────────────────────
     const all = [inpA, inpX, inpY, inpTen, inpY2, inpRes];
+    all.forEach(i => i.addEventListener('focus', () => timerFirstTouch('tappa')));
     all.forEach((inp, pos) => {
       inp.addEventListener('keydown', e => {
         if (e.key !== 'Enter') return;
@@ -1436,7 +1447,7 @@ function generateTappaMinus() {
   document.getElementById('vfb-tappa-minus').textContent = '';
   renderTappaMinus();
   updateTappaMinusScore();
-  timerStart('tappa-minus');
+  timerArm('tappa-minus');
 }
 
 function renderTappaMinus() {
@@ -1518,6 +1529,7 @@ function renderTappaMinus() {
     container.appendChild(wrap);
 
     const all = [inpA, inpB1, inpB2, inpTen, inpB2c, inpRes];
+    all.forEach(i => i.addEventListener('focus', () => timerFirstTouch('tappa-minus')));
     all.forEach((inp, pos) => {
       inp.addEventListener('keydown', e => {
         if (e.key !== 'Enter') return;
@@ -1645,7 +1657,7 @@ function generateTappaMix() {
   document.getElementById('vfb-tappa-mix').textContent = '';
   renderTappaMix();
   updateTappaMixScore();
-  timerStart('tappa-mix');
+  timerArm('tappa-mix');
 }
 
 function renderTappaMix() {
@@ -1733,6 +1745,7 @@ function renderTappaMix() {
 
     // Enter nav
     const all = [inpA, inpP1, inpP2, inpTen, inpP2c, inpRes];
+    all.forEach(i => i.addEventListener('focus', () => timerFirstTouch('tappa-mix')));
     all.forEach((inp, pos) => {
       inp.addEventListener('keydown', e => {
         if (e.key !== 'Enter') return;
@@ -1852,29 +1865,52 @@ generateTappa();
 generateTappaMinus();
 generateTappaMix();
 CP=cGenerate();cRender();
-timerStart('cross');
+timerArm('cross');
 
 /* ════════════════════════════════════════════════════
    TIMER SYSTEM
 ════════════════════════════════════════════════════ */
 const timerState = {};
+const timerStarted = {};
 const TYPE_LABELS = {
   'cross':'Cruciverba','plus2':'+2 / −2','plus5':'+5 / −5',
   'tens':'Decine','mix':'Serie Mix',
   'tappa':'Tappa +','tappa-minus':'Tappa −','tappa-mix':'Tappa Mix'
 };
 
+/* Arm: reset timer, hide badge, wait for first touch */
+function timerArm(type) {
+  if (timerState[type] && timerState[type].intervalId) {
+    clearInterval(timerState[type].intervalId);
+  }
+  timerState[type] = { start: 0, elapsed: 0, intervalId: null };
+  timerStarted[type] = false;
+  timerDisplay(type, 0);
+  const el = document.getElementById('timer-' + type);
+  if (el) el.classList.remove('running');
+}
+
+/* Called on first user touch of any input in a section */
+function timerFirstTouch(type) {
+  if (timerStarted[type]) return;
+  timerStarted[type] = true;
+  timerStart(type);
+}
+
+/* Start the actual interval */
 function timerStart(type) {
   if (timerState[type] && timerState[type].intervalId) {
     clearInterval(timerState[type].intervalId);
   }
   const start = Date.now();
   timerState[type] = { start, elapsed: 0, intervalId: null };
-  timerState[type].intervalId = setInterval(() => {
+  const tick = () => {
     const sec = Math.floor((Date.now() - start) / 1000);
     timerState[type].elapsed = sec;
     timerDisplay(type, sec);
-  }, 500);
+    timerState[type].intervalId = setTimeout(tick, 1000 - (Date.now() - start) % 1000);
+  };
+  timerState[type].intervalId = setTimeout(tick, 1000);
   timerDisplay(type, 0);
   const el = document.getElementById('timer-' + type);
   if (el) el.classList.add('running');
@@ -1883,10 +1919,9 @@ function timerStart(type) {
 function timerStop(type) {
   const ts = timerState[type];
   if (!ts) return 0;
-  clearInterval(ts.intervalId);
+  clearTimeout(ts.intervalId);
   ts.intervalId = null;
-  const sec = Math.floor((Date.now() - ts.start) / 1000);
-  ts.elapsed = sec;
+  const sec = ts.elapsed || 0;
   const el = document.getElementById('timer-' + type);
   if (el) el.classList.remove('running');
   timerDisplay(type, sec);
@@ -1902,8 +1937,7 @@ function timerDisplay(type, sec) {
 }
 
 function timerReset(type) {
-  timerStop(type);
-  timerDisplay(type, 0);
+  timerArm(type);
 }
 
 /* ════════════════════════════════════════════════════

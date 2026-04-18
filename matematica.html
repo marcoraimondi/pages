@@ -470,8 +470,6 @@ input[type=number].tg-inp::-webkit-outer-spin-button { -webkit-appearance: none;
 
 /* ── TIMER ── */
 .timer-badge {
-  background: #fff3e0;
-  color: #e65100;
   font-weight: 800;
   padding: 4px 12px;
   border-radius: 50px;
@@ -479,16 +477,15 @@ input[type=number].tg-inp::-webkit-outer-spin-button { -webkit-appearance: none;
   font-variant-numeric: tabular-nums;
   min-width: 72px;
   text-align: center;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.4s, visibility 0.4s;
+  display: none;
 }
 .timer-badge.running {
+  display: inline-block;
   background: #e8f5e9;
   color: #2e7d32;
-  opacity: 1;
-  visibility: visible;
+  animation: timerFadeIn 0.4s ease forwards;
 }
+@keyframes timerFadeIn { from { opacity:0; transform:scale(0.85); } to { opacity:1; transform:scale(1); } }
 
 /* ── CLASSIFICA ── */
 .rank-wrap { padding: 4px 0 8px; }
@@ -1881,20 +1878,32 @@ const TYPE_LABELS = {
 /* Arm: reset timer, hide badge, wait for first touch */
 function timerArm(type) {
   if (timerState[type] && timerState[type].intervalId) {
-    clearInterval(timerState[type].intervalId);
+    clearTimeout(timerState[type].intervalId);
   }
   timerState[type] = { start: 0, elapsed: 0, intervalId: null };
   timerStarted[type] = false;
   timerDisplay(type, 0);
   const el = document.getElementById('timer-' + type);
   if (el) el.classList.remove('running');
+  // Hook section container: fires on any focus/input/touch inside
+  const sec = document.getElementById('section-' + type);
+  timerHookContainer(sec, type);
 }
 
-/* Called on first user touch of any input in a section */
+/* Called on first user interaction with any input in a section */
 function timerFirstTouch(type) {
   if (timerStarted[type]) return;
   timerStarted[type] = true;
   timerStart(type);
+}
+
+/* Hook all inputs inside a container element for a given type */
+function timerHookContainer(containerEl, type) {
+  if (!containerEl) return;
+  const activate = () => timerFirstTouch(type);
+  containerEl.addEventListener('focus',      activate, true);  // capture
+  containerEl.addEventListener('input',      activate, { once: false, capture: true });
+  containerEl.addEventListener('touchstart', activate, { passive: true, capture: true });
 }
 
 /* Start the actual interval */

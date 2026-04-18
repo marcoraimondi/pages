@@ -1854,16 +1854,6 @@ function updateTappaMixScore() {
   document.getElementById('streak-tappa-mix').textContent = '🌟 Serie: ' + globalStreak;
 }
 
-generateAll('plus2');
-generateAll('plus5');
-generateAll('tens');
-generateAll('mix');
-generateTappa();
-generateTappaMinus();
-generateTappaMix();
-CP=cGenerate();cRender();
-timerArm('cross');
-
 /* ════════════════════════════════════════════════════
    TIMER SYSTEM
 ════════════════════════════════════════════════════ */
@@ -1948,6 +1938,16 @@ function timerDisplay(type, sec) {
 function timerReset(type) {
   timerArm(type);
 }
+generateAll('plus2');
+generateAll('plus5');
+generateAll('tens');
+generateAll('mix');
+generateTappa();
+generateTappaMinus();
+generateTappaMix();
+CP=cGenerate();cRender();
+timerArm('cross');
+
 
 /* ════════════════════════════════════════════════════
    LEADERBOARD / CLASSIFICA

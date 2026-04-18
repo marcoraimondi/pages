@@ -467,6 +467,62 @@ input[type=number].tg-inp::-webkit-inner-spin-button,
 input[type=number].tg-inp::-webkit-outer-spin-button { -webkit-appearance: none; }
 .tg-rfb { font-size:18px; justify-self:start; }
 .tg-bridge { display:flex; align-items:center; justify-content:center; width:100%; }
+
+/* ── TIMER ── */
+.timer-badge {
+  background: #fff3e0;
+  color: #e65100;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  min-width: 72px;
+  text-align: center;
+}
+.timer-badge.running { background: #e8f5e9; color: #2e7d32; }
+
+/* ── CLASSIFICA ── */
+.rank-wrap { padding: 4px 0 8px; }
+.rank-empty { text-align:center; color:#aaa; font-size:14px; padding:28px 0; }
+.rank-filters {
+  display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; justify-content:center;
+}
+.rank-filters select {
+  padding:6px 10px; border-radius:50px; border:2px solid #f8bbd0;
+  font-family:inherit; font-size:12px; font-weight:700; color:#d81b60;
+  background:#fce4ec; outline:none; cursor:pointer;
+}
+.rank-clear {
+  padding:6px 14px; border-radius:50px; border:none; cursor:pointer;
+  font-family:inherit; font-size:12px; font-weight:700;
+  background:#ff5252; color:white;
+}
+.rank-table { width:100%; border-collapse:collapse; font-size:12px; }
+.rank-table th {
+  background:#fce4ec; color:#c2185b; font-weight:800; padding:6px 4px;
+  text-align:left; border-bottom:2px solid #f8bbd0;
+}
+.rank-table td { padding:6px 4px; border-bottom:1px solid #fce4ec; vertical-align:middle; }
+.rank-table tr:last-child td { border-bottom:none; }
+.rank-badge-diff {
+  display:inline-block; padding:2px 7px; border-radius:50px;
+  font-size:11px; font-weight:800;
+}
+.rank-badge-diff.easy   { background:#e8f5e9; color:#2e7d32; }
+.rank-badge-diff.medium { background:#fff3e0; color:#e65100; }
+.rank-badge-diff.hard   { background:#ffebee; color:#c62828; }
+.rank-score-perfect { color:#2e7d32; font-weight:800; }
+.rank-score-partial { color:#e65100; font-weight:700; }
+.rank-new-toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  background:#d81b60; color:white; font-weight:800; padding:10px 20px;
+  border-radius:50px; font-size:14px; box-shadow:0 4px 16px rgba(216,27,96,0.4);
+  opacity:0; transition:opacity 0.4s; pointer-events:none; z-index:9999;
+  white-space:nowrap;
+}
+.rank-new-toast.show { opacity:1; }
+
 </style>
 </head>
 <body>
@@ -490,6 +546,7 @@ input[type=number].tg-inp::-webkit-outer-spin-button { -webkit-appearance: none;
   <button class="nav-btn" onclick="showSection('tappa',this)">➕ Tappa +</button>
   <button class="nav-btn" onclick="showSection('tappa-minus',this)">➖ Tappa −</button>
   <button class="nav-btn" onclick="showSection('tappa-mix',this)">🔀 Tappa Mix</button>
+  <button class="nav-btn" onclick="showSection('classifica',this)">🏆 Classifica</button>
 </nav>
 
 <!-- ── CRUCIVERBA ── -->
@@ -499,6 +556,7 @@ input[type=number].tg-inp::-webkit-outer-spin-button { -webkit-appearance: none;
       <h2>✏️ Cruciverba</h2>
       <div class="score-bar" style="margin-bottom:10px">
         <span class="streak-badge" id="streak-cross">🌟 Serie: 0</span>
+        <span class="timer-badge" id="timer-cross">⏱ 0:00</span>
       </div>
       <p class="cruci-sub">Completa le caselle rosa 🌸 Le equazioni devono tornare sia → che ↓</p>
       <div class="cruci-grid-wrap">
@@ -522,6 +580,7 @@ input[type=number].tg-inp::-webkit-outer-spin-button { -webkit-appearance: none;
     <div class="score-bar">
       <span class="streak-badge" id="streak-plus2">🌟 Serie: 0</span>
       <span class="score-badge" id="score-plus2">🌸 0 / 5</span>
+      <span class="timer-badge" id="timer-plus2">⏱ 0:00</span>
     </div>
     <div id="rows-plus2"></div>
     <div class="verify-feedback" id="vfb-plus2"></div>
@@ -540,6 +599,7 @@ input[type=number].tg-inp::-webkit-outer-spin-button { -webkit-appearance: none;
     <div class="score-bar">
       <span class="streak-badge" id="streak-plus5">🌟 Serie: 0</span>
       <span class="score-badge" id="score-plus5">🌸 0 / 5</span>
+      <span class="timer-badge" id="timer-plus5">⏱ 0:00</span>
     </div>
     <div id="rows-plus5"></div>
     <div class="verify-feedback" id="vfb-plus5"></div>
@@ -558,6 +618,7 @@ input[type=number].tg-inp::-webkit-outer-spin-button { -webkit-appearance: none;
     <div class="score-bar">
       <span class="streak-badge" id="streak-tens">🌟 Serie: 0</span>
       <span class="score-badge" id="score-tens">🌸 0 / 5</span>
+      <span class="timer-badge" id="timer-tens">⏱ 0:00</span>
     </div>
     <div id="rows-tens"></div>
     <div class="verify-feedback" id="vfb-tens"></div>
@@ -576,6 +637,7 @@ input[type=number].tg-inp::-webkit-outer-spin-button { -webkit-appearance: none;
     <div class="score-bar">
       <span class="streak-badge" id="streak-mix">🌟 Serie: 0</span>
       <span class="score-badge" id="score-mix">🌸 0 / 5</span>
+      <span class="timer-badge" id="timer-mix">⏱ 0:00</span>
     </div>
     <div id="rows-mix"></div>
     <div class="verify-feedback" id="vfb-mix"></div>
@@ -594,6 +656,7 @@ input[type=number].tg-inp::-webkit-outer-spin-button { -webkit-appearance: none;
     <div class="score-bar">
       <span class="streak-badge" id="streak-tappa">🌟 Serie: 0</span>
       <span class="score-badge" id="score-tappa">🌸 0 / 5</span>
+      <span class="timer-badge" id="timer-tappa">⏱ 0:00</span>
     </div>
     <p style="text-align:center;font-size:12px;color:#888;margin-bottom:12px;">Fai tappa alla decina e calcola 🌸</p>
     <div id="rows-tappa"></div>
@@ -613,6 +676,7 @@ input[type=number].tg-inp::-webkit-outer-spin-button { -webkit-appearance: none;
     <div class="score-bar">
       <span class="streak-badge" id="streak-tappa-minus">🌟 Serie: 0</span>
       <span class="score-badge" id="score-tappa-minus">🌸 0 / 5</span>
+      <span class="timer-badge" id="timer-tappa-minus">⏱ 0:00</span>
     </div>
     <p style="text-align:center;font-size:12px;color:#888;margin-bottom:12px;">Fai tappa alla decina sottraendo 🌸</p>
     <div id="rows-tappa-minus"></div>
@@ -632,6 +696,7 @@ input[type=number].tg-inp::-webkit-outer-spin-button { -webkit-appearance: none;
     <div class="score-bar">
       <span class="streak-badge" id="streak-tappa-mix">🌟 Serie: 0</span>
       <span class="score-badge" id="score-tappa-mix">🌸 0 / 5</span>
+      <span class="timer-badge" id="timer-tappa-mix">⏱ 0:00</span>
     </div>
     <p style="text-align:center;font-size:12px;color:#888;margin-bottom:12px;">Addizioni e sottrazioni con tappa alla decina — miste! 🔀</p>
     <div id="rows-tappa-mix"></div>
@@ -653,6 +718,7 @@ function showSection(id, btn) {
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('section-' + id).classList.add('active');
   btn.classList.add('active');
+  if (id === 'classifica') renderClassifica();
 }
 
 /* ════════════════════════════
@@ -750,6 +816,7 @@ function generateAll(type) {
   updateScore(type);
   document.getElementById('vfb-' + type).textContent = '';
   renderRows(type);
+  timerStart(type);
 }
 
 function resetAll(type) {
@@ -891,6 +958,9 @@ function verifyAll(type) {
   s.solved = correct;
   if (correct === 5) addStreak();
   updateScore(type);
+
+  const elapsed = timerStop(type);
+  rankAdd(type, difficulty, elapsed, correct, 5);
 
   const vfb = document.getElementById('vfb-' + type);
   if (correct === 5) {
@@ -1054,7 +1124,12 @@ function cVerify() {
     w.classList.remove('c-correct','c-wrong');
     w.classList.add(v[n]===CP.v[n]?'c-correct':'c-wrong');
   });
-  if (eqs.every(Boolean)){
+  const allOk = eqs.every(Boolean);
+  const elapsed_c = timerStop('cross');
+  const scoreC = CP.hidden.size;
+  const correctC = [...CP.hidden].filter(n => v[n] === CP.v[n]).length;
+  rankAdd('cross', difficulty, elapsed_c, allOk ? scoreC : correctC, scoreC);
+  if (allOk){
     addStreak();
     fb.textContent='🌟 Bravissima! Cruciverba perfetto! 🎀';fb.className='cruci-feedback ok';
   } else {
@@ -1076,6 +1151,7 @@ function cNew() {
   document.getElementById('cfeedback').textContent='';
   document.getElementById('cfeedback').className='cruci-feedback';
   CP=cGenerate();cRender();
+  timerStart('cross');
 }
 
 /* ════════════════════════════
@@ -1117,6 +1193,7 @@ function generateTappa() {
   document.getElementById('vfb-tappa').textContent = '';
   renderTappa();
   updateTappaScore();
+  timerStart('tappa');
 }
 
 
@@ -1276,6 +1353,8 @@ function verifyTappa() {
   tappaState.solved = correct;
   if (correct === 5) addStreak();
   updateTappaScore();
+  const elapsed_t = timerStop('tappa');
+  rankAdd('tappa', difficulty, elapsed_t, correct, 5);
 
   const vfb = document.getElementById('vfb-tappa');
   if (correct === 5) {
@@ -1357,6 +1436,7 @@ function generateTappaMinus() {
   document.getElementById('vfb-tappa-minus').textContent = '';
   renderTappaMinus();
   updateTappaMinusScore();
+  timerStart('tappa-minus');
 }
 
 function renderTappaMinus() {
@@ -1499,6 +1579,8 @@ function verifyTappaMinus() {
   tappaMinusState.solved = correct;
   if (correct === 5) addStreak();
   updateTappaMinusScore();
+  const elapsed_tm = timerStop('tappa-minus');
+  rankAdd('tappa-minus', difficulty, elapsed_tm, correct, 5);
 
   const vfb = document.getElementById('vfb-tappa-minus');
   if (correct === 5) {
@@ -1563,6 +1645,7 @@ function generateTappaMix() {
   document.getElementById('vfb-tappa-mix').textContent = '';
   renderTappaMix();
   updateTappaMixScore();
+  timerStart('tappa-mix');
 }
 
 function renderTappaMix() {
@@ -1725,6 +1808,8 @@ function verifyTappaMix() {
   tappaMixState.solved = correct;
   if (correct === 5) addStreak();
   updateTappaMixScore();
+  const elapsed_tmix = timerStop('tappa-mix');
+  rankAdd('tappa-mix', difficulty, elapsed_tmix, correct, 5);
 
   const vfb = document.getElementById('vfb-tappa-mix');
   if (correct === 5) {
@@ -1767,6 +1852,181 @@ generateTappa();
 generateTappaMinus();
 generateTappaMix();
 CP=cGenerate();cRender();
+timerStart('cross');
+
+/* ════════════════════════════════════════════════════
+   TIMER SYSTEM
+════════════════════════════════════════════════════ */
+const timerState = {};
+const TYPE_LABELS = {
+  'cross':'Cruciverba','plus2':'+2 / −2','plus5':'+5 / −5',
+  'tens':'Decine','mix':'Serie Mix',
+  'tappa':'Tappa +','tappa-minus':'Tappa −','tappa-mix':'Tappa Mix'
+};
+
+function timerStart(type) {
+  if (timerState[type] && timerState[type].intervalId) {
+    clearInterval(timerState[type].intervalId);
+  }
+  const start = Date.now();
+  timerState[type] = { start, elapsed: 0, intervalId: null };
+  timerState[type].intervalId = setInterval(() => {
+    const sec = Math.floor((Date.now() - start) / 1000);
+    timerState[type].elapsed = sec;
+    timerDisplay(type, sec);
+  }, 500);
+  timerDisplay(type, 0);
+  const el = document.getElementById('timer-' + type);
+  if (el) el.classList.add('running');
+}
+
+function timerStop(type) {
+  const ts = timerState[type];
+  if (!ts) return 0;
+  clearInterval(ts.intervalId);
+  ts.intervalId = null;
+  const sec = Math.floor((Date.now() - ts.start) / 1000);
+  ts.elapsed = sec;
+  const el = document.getElementById('timer-' + type);
+  if (el) el.classList.remove('running');
+  timerDisplay(type, sec);
+  return sec;
+}
+
+function timerDisplay(type, sec) {
+  const el = document.getElementById('timer-' + type);
+  if (!el) return;
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  el.textContent = '⏱ ' + m + ':' + String(s).padStart(2,'0');
+}
+
+function timerReset(type) {
+  timerStop(type);
+  timerDisplay(type, 0);
+}
+
+/* ════════════════════════════════════════════════════
+   LEADERBOARD / CLASSIFICA
+════════════════════════════════════════════════════ */
+const RANK_KEY = 'mat_classifica_v1';
+
+function rankLoad() {
+  try { return JSON.parse(localStorage.getItem(RANK_KEY) || '[]'); }
+  catch(e) { return []; }
+}
+function rankSave(arr) {
+  localStorage.setItem(RANK_KEY, JSON.stringify(arr));
+}
+
+function rankAdd(type, difficulty, timeSec, score, total) {
+  const arr = rankLoad();
+  arr.unshift({
+    date: new Date().toISOString(),
+    type,
+    difficulty,
+    time: timeSec,
+    score,
+    total: total || 5
+  });
+  // keep max 200 entries
+  if (arr.length > 200) arr.length = 200;
+  rankSave(arr);
+  showRankToast(score === (total || 5));
+}
+
+function showRankToast(perfect) {
+  const t = document.getElementById('rank-toast');
+  if (!t) return;
+  t.textContent = perfect ? '🌟 Perfetto! Salvato in classifica!' : '📝 Risultato salvato in classifica!';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function clearClassifica() {
+  if (!confirm('Cancellare tutta la classifica?')) return;
+  localStorage.removeItem(RANK_KEY);
+  renderClassifica();
+}
+
+function fmtDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit'}) +
+         ' ' + d.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+}
+function fmtTime(sec) {
+  const m = Math.floor(sec/60), s = sec%60;
+  return m + ':' + String(s).padStart(2,'0');
+}
+function fmtDiff(d) {
+  return d === 'easy' ? 'Facile' : d === 'hard' ? 'Alta' : 'Media';
+}
+
+function renderClassifica() {
+  const wrap = document.getElementById('rank-table-wrap');
+  if (!wrap) return;
+  const typeFilter = document.getElementById('rf-type').value;
+  const diffFilter = document.getElementById('rf-diff').value;
+  let arr = rankLoad();
+  if (typeFilter) arr = arr.filter(r => r.type === typeFilter);
+  if (diffFilter) arr = arr.filter(r => r.difficulty === diffFilter);
+
+  if (arr.length === 0) {
+    wrap.innerHTML = '<div class="rank-empty">Nessun risultato ancora 🌸<br>Completa un esercizio per iniziare!</div>';
+    return;
+  }
+
+  let html = '<table class="rank-table">';
+  html += '<tr><th>Data</th><th>Tipo</th><th>Diff.</th><th>Tempo</th><th>Punti</th></tr>';
+  arr.forEach(r => {
+    const tot = r.total || 5;
+    const perfect = r.score === tot;
+    const diffLabel = fmtDiff(r.difficulty);
+    const scoreCls = perfect ? 'rank-score-perfect' : 'rank-score-partial';
+    html += '<tr>' +
+      '<td>' + fmtDate(r.date) + '</td>' +
+      '<td>' + (TYPE_LABELS[r.type] || r.type) + '</td>' +
+      '<td><span class="rank-badge-diff ' + r.difficulty + '">' + diffLabel + '</span></td>' +
+      '<td>' + fmtTime(r.time) + '</td>' +
+      '<td class="' + scoreCls + '">' + r.score + '/' + tot + (perfect ? ' ⭐' : '') + '</td>' +
+      '</tr>';
+  });
+  html += '</table>';
+  wrap.innerHTML = html;
+}
+
 </script>
+
+<!-- ── CLASSIFICA ── -->
+<div id="section-classifica" class="section">
+  <div class="card">
+    <h2>🏆 Classifica</h2>
+    <div class="rank-wrap">
+      <div class="rank-filters">
+        <select id="rf-type" onchange="renderClassifica()">
+          <option value="">Tutti i tipi</option>
+          <option value="cross">Cruciverba</option>
+          <option value="plus2">+2 / −2</option>
+          <option value="plus5">+5 / −5</option>
+          <option value="tens">Decine</option>
+          <option value="mix">Serie Mix</option>
+          <option value="tappa">Tappa +</option>
+          <option value="tappa-minus">Tappa −</option>
+          <option value="tappa-mix">Tappa Mix</option>
+        </select>
+        <select id="rf-diff" onchange="renderClassifica()">
+          <option value="">Tutte le difficoltà</option>
+          <option value="easy">Facile</option>
+          <option value="medium">Media</option>
+          <option value="hard">Alta</option>
+        </select>
+        <button class="rank-clear" onclick="clearClassifica()">🗑 Cancella tutto</button>
+      </div>
+      <div id="rank-table-wrap"></div>
+    </div>
+  </div>
+</div>
+
+<div id="rank-toast" class="rank-new-toast">🏆 Risultato salvato!</div>
 </body>
 </html>

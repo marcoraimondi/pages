@@ -1571,7 +1571,7 @@ function verifyTappaMinus() {
     const okA   = !isNaN(vA)   && vA   === ex.A;
     const okB1  = !isNaN(vB1)  && vB1  === ex.B1;
     const okB2  = !isNaN(vB2)  && vB2  === ex.B2;
-    const okTen = !isNaN(vTen) && vTen === 10;
+    const okTen = !isNaN(vTen) && vTen === (ex.A - ex.B1);
     const okB2c = !isNaN(vB2c) && vB2c === ex.B2;
     const okRes = !isNaN(vRes) && vRes === ex.Result;
 
@@ -1785,23 +1785,25 @@ function verifyTappaMix() {
     const vTen = parseInt(inpTen.value), vP2c = parseInt(inpP2c.value);
     const vRes = parseInt(inpRes.value);
 
-    let expA, expP1, expP2, expRes;
+    let expA, expP1, expP2, expRes, expTen;
     if (isPlus) {
       expA   = ex.A;
-      expP1  = ex.X;  // part to reach 10
+      expP1  = ex.X;  // part to reach next ten
       expP2  = ex.Y;  // remainder
+      expTen = ex.A + ex.X;  // the ten landmark (e.g. 90 for 88+2)
       expRes = ex.Result;
     } else {
       expA   = ex.A;
       expP1  = ex.B1;
       expP2  = ex.B2;
+      expTen = ex.A - ex.B1;  // the ten landmark (e.g. 10 for 12-2)
       expRes = ex.Result;
     }
 
     const okA   = !isNaN(vA)   && vA   === expA;
     const okP1  = !isNaN(vP1)  && vP1  === expP1;
     const okP2  = !isNaN(vP2)  && vP2  === expP2;
-    const okTen = !isNaN(vTen) && vTen === 10;
+    const okTen = !isNaN(vTen) && vTen === expTen;
     const okP2c = !isNaN(vP2c) && vP2c === expP2;
     const okRes = !isNaN(vRes) && vRes === expRes;
 

@@ -1181,7 +1181,7 @@ function genTappaOne() {
       B = Math.floor(Math.random() * 8) + 2;   // 2–9
     }
     if (tries > 200) break;
-  } while ((A % 10) + B <= 10 || B < 2);
+  } while ((A % 10) === 0 || (A % 10) + B <= 10 || B < 2);
   const nextTen = Math.ceil((A + 1) / 10) * 10;
   const X = nextTen - A;
   const Y = B - X;
@@ -1337,10 +1337,11 @@ function verifyTappa() {
     const vA   = parseInt(inpA.value),   vX  = parseInt(inpX.value),  vY  = parseInt(inpY.value);
     const vTen = parseInt(inpTen.value), vY2 = parseInt(inpY2.value), vRes = parseInt(inpRes.value);
 
+    const expectedTen = ex.A + ex.X;  // la decina di tappa = A + X
     const okA   = !isNaN(vA)   && vA   === ex.A;
     const okX   = !isNaN(vX)   && vX   === ex.X;
     const okY   = !isNaN(vY)   && vY   === ex.Y;
-    const okTen = !isNaN(vTen) && vTen === 10;
+    const okTen = !isNaN(vTen) && vTen === expectedTen;
     const okY2  = !isNaN(vY2)  && vY2  === ex.Y;
     const okRes = !isNaN(vRes) && vRes === ex.Result;
 

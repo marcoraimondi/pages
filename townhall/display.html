@@ -188,6 +188,13 @@ html, body {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
+async function waitForChart(ms=5000) {
+  const t0 = Date.now();
+  while (typeof Chart === 'undefined' && Date.now()-t0 < ms)
+    await new Promise(r => setTimeout(r, 50));
+  if (typeof Chart === 'undefined') throw new Error('Chart.js non caricato');
+}
+
 // Firebase init inline — no module dependency issues
 const app = initializeApp({
   apiKey: "AIzaSyAKUJyfsvSvYm-Alvv8xjF39mf9fH_GR40",
@@ -199,6 +206,9 @@ const app = initializeApp({
   appId: "1:922581580105:web:56a85984338c470fb88298"
 });
 const db = getDatabase(app);
+
+// Wait for Chart.js before setting up chart
+await waitForChart();
 
 const EMOJIS = ['😴','😐','🙂','😄','🔥'];
 const LABELS = ['Assonnata','Neutra','Positiva','Entusiasta','On fire!'];

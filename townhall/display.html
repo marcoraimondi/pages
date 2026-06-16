@@ -207,6 +207,9 @@ async function waitForChart(ms=5000) {
   if (typeof Chart === 'undefined') throw new Error('Chart.js non caricato');
 }
 
+// Avvia tutto dentro un async IIFE — evita top-level await
+(async () => {
+
 // Firebase init inline — no module dependency issues
 const app = initializeApp(window._fbConfig);
 const db = getDatabase(app);
@@ -442,6 +445,8 @@ async function loadQuestion(qid) {
     });
   });
 }
+
+})(); // chiude l'async IIFE
 </script>
 </body>
 </html>

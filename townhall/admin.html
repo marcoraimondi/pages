@@ -66,6 +66,15 @@
 </div>
 
 <div class="panel">
+  <h2>🎞 Ticker (testo scorrevole)</h2>
+  <label>Etichetta badge (es. LIVE, BREAK, ULTIME ORE)</label>
+  <input id="ticker-tag" placeholder="LIVE" maxlength="20">
+  <label>Testo del ticker (scorre in loop)</label>
+  <textarea id="ticker-text-input" placeholder="Es: Benvenuti al Townhall Strategy 2026 ● Vota su marcoraimondi.github.io/pages/townhall ● Grazie per la partecipazione" style="min-height:70px"></textarea>
+  <button class="btn btn-primary btn-sm" onclick="saveTicker()">✔ Aggiorna ticker</button>
+</div>
+
+<div class="panel">
   <h2>Aggiungi domanda</h2>
   <label>Testo della domanda</label>
   <textarea id="new-q-text" placeholder="Es: Quale sarà il prodotto con più crescita nel 2026?"></textarea>
@@ -160,6 +169,22 @@ window.deleteQ = async function(qid) {
   if (!confirm('Eliminare questa domanda?')) return;
   await remove(ref(db,'questions/'+qid));
   if (activeQid === qid) await set(ref(db,'active_question'), null);
+};
+
+// Load saved ticker values
+onValue(ref(db,'ticker'), snap => {
+  const t = snap.val();
+  if (!t) return;
+  if (t.text) document.getElementById('ticker-text-input').value = t.text;
+  if (t.tag) document.getElementById('ticker-tag').value = t.tag;
+});
+
+window.saveTicker = async function() {
+  const text = document.getElementById('ticker-text-input').value.trim();
+  const tag = document.getElementById('ticker-tag').value.trim() || 'LIVE';
+  if (!text) { alert('Inserisci il testo del ticker'); return; }
+  await set(ref(db,'ticker'), { text, tag, updated: Date.now() });
+  alert('Ticker aggiornato!');
 };
 
 window.clearVotes = async function() {

@@ -7,10 +7,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body {
+html, body {
   font-family: 'Roboto Condensed', Arial, sans-serif;
   background: #04080f; color: #fff;
-  height: 100vh; overflow: hidden;
+  height: 100%; overflow: hidden;
   display: flex; flex-direction: column;
 }
 
@@ -36,7 +36,7 @@ body {
 .voter-pill strong { color:#fff; font-size:16px; }
 
 /* MAIN */
-.main { flex:1; display:flex; overflow:hidden; min-height:0; }
+.main { flex:1; display:flex; overflow:hidden; height:0; min-height:0; }
 
 /* VOTE AREA */
 .vote-area {
@@ -67,7 +67,8 @@ body {
   width:340px; flex-shrink:0;
   display:flex; flex-direction:column;
   padding:20px 20px 12px 20px;
-  min-height:0;
+  height:100%;
+  overflow:hidden;
 }
 .main.fs .vote-area { display:none; }
 .main.fs .sentiment-panel { width:100%; padding:20px 60px 12px 60px; }
@@ -83,9 +84,9 @@ body {
 .mood-bar-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,#3b82f6 0%,#22c55e 50%,#f59e0b 80%,#ef4444 100%); transition:width .8s ease; width:50%; }
 .mood-bar-labels { display:flex; justify-content:space-between; font-size:10px; color:#475569; margin-top:4px; }
 .sent-count { font-size:12px; color:#64748b; text-align:right; margin-bottom:10px; flex-shrink:0; }
-.chart-wrap { background:#071428; border:1px solid #1a3060; border-radius:12px; padding:12px 14px; flex:1; display:flex; flex-direction:column; min-height:0; overflow:hidden; }
+.chart-wrap { background:#071428; border:1px solid #1a3060; border-radius:12px; padding:12px 14px; flex:1; display:flex; flex-direction:column; min-height:200px; }
 .chart-title { font-size:11px; color:#64748b; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px; flex-shrink:0; }
-#sentimentChart { flex:1; min-height:0; width:100% !important; }
+#sentimentChart { display:block; flex:1; width:100% !important; min-height:160px; }
 
 /* TICKER */
 .ticker-bar {
@@ -185,7 +186,7 @@ body {
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, get, set, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 // Firebase init inline — no module dependency issues
 const app = initializeApp({
@@ -297,18 +298,10 @@ function redrawChart() {
   const vis = allPts.filter(p => p.ts >= cutoff);
   chartData.labels = vis.map(p => p.label);
   chartData.datasets[0].data = vis.map(p => p.value);
-  chart.update('none'); // no animation for redraw
+  chart.update('none');
 }
 
-// Load history ONCE at startup — don't listen with onValue because
-// every local push() would re-trigger and overwrite allPts mid-session.
-get(ref(db,'sentiment_history')).then(snap => {
-  const d = snap.val();
-  allPts = d ? Object.values(d).sort((a,b) => a.ts - b.ts) : [];
-  redrawChart();
-});
-
-// Slide the 30-min window every 60s
+// Slide the 30-min window every 60s to drop old points
 setInterval(redrawChart, 60000);
 
 /* ═══════════════════════════════════════
@@ -321,17 +314,14 @@ function record(avg) {
   lastRecord = Date.now();
   const d = new Date();
   const label = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
-  const pt = { label, value: parseFloat(avg.toFixed(2)), ts: lastRecord };
-  // Update in-memory immediately — don't wait for Firebase round-trip
-  allPts.push(pt);
+  allPts.push({ label, value: parseFloat(avg.toFixed(2)), ts: lastRecord });
+  if (allPts.length > 240) allPts = allPts.slice(-240);
   redrawChart();
-  // Also persist to Firebase for cross-device sync and reload
-  push(ref(db,'sentiment_history'), pt);
 }
 
-// Record every 30s even if no new votes arrive
+// Tick every 5s: record a point if 30s have passed
 setInterval(() => {
-  if (lastAvg !== null && Date.now() - lastRecord >= 29000) record(lastAvg);
+  if (lastAvg !== null && Date.now() - lastRecord >= 30000) record(lastAvg);
 }, 5000);
 
 onValue(ref(db,'sentiment'), snap => {
@@ -360,8 +350,9 @@ onValue(ref(db,'sentiment'), snap => {
   document.getElementById('mood-fill').style.width = ((avg-1)/4*100) + '%';
   document.getElementById('sent-count').textContent = vals.length + ' risposte';
 
-  // Record immediately if 30s have passed
-  if (Date.now() - lastRecord >= 29000) record(avg);
+  // Record a chart point on EVERY sentiment update
+  // (record() throttles internally to max 1 point per 30s)
+  if (Date.now() - lastRecord >= 30000) record(avg);
 });
 
 /* ═══════════════════════════════════════
@@ -380,11 +371,15 @@ onValue(ref(db,'active_question'), snap => {
     document.getElementById('voter-count').textContent = '0';
     if (votesUnsub) { votesUnsub(); votesUnsub = null; }
     curQid = null;
+    // Force Chart.js to resize after layout change
+    setTimeout(() => chart.resize(), 50);
     return;
   }
 
   mainEl.classList.remove('fs');
   if (qid === curQid) return;
+  // Force Chart.js resize back to narrower column
+  setTimeout(() => chart.resize(), 50);
   curQid = qid;
   loadQuestion(qid);
 });

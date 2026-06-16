@@ -15,7 +15,7 @@
   .panel { background: #111a2e; border: 1px solid #1e3a6e; border-radius: 14px; padding: 20px; margin-bottom: 20px; }
   .panel h2 { font-size: 15px; color: #4a90e2; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; }
   label { font-size: 13px; color: #aaa; display: block; margin-bottom: 6px; }
-  input, textarea, select {
+  input, textarea {
     width: 100%; background: #0a0a1a; border: 1px solid #2a3a5e;
     border-radius: 8px; color: #fff; padding: 10px 12px; font-size: 14px;
     margin-bottom: 14px; font-family: inherit;
@@ -23,7 +23,7 @@
   textarea { resize: vertical; min-height: 60px; }
   .opt-row { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; }
   .opt-row input { margin-bottom: 0; flex: 1; }
-  .opt-row .lbl { width: 28px; height: 28px; border-radius: 6px; display:flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0; }
+  .opt-row .lbl { width: 28px; height: 28px; border-radius: 6px; display:flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0; font-size:13px; }
   .lbl-a{background:#c8372d;} .lbl-b{background:#2d8a4e;} .lbl-c{background:#c88a2d;} .lbl-d{background:#2d6ac8;}
 
   .btn { border: none; border-radius: 10px; padding: 10px 18px; font-size: 14px; font-weight: 700; cursor: pointer; transition: opacity 0.15s; font-family: inherit; }
@@ -53,29 +53,29 @@
 
 <div class="status-bar">
   <div class="status-dot"></div>
-  <div class="status-text">Firebase connesso &nbsp;|&nbsp; Votanti live: <strong id="status-voters">0</strong> &nbsp;|&nbsp; Domanda attiva: <strong id="status-active">nessuna</strong></div>
+  <div id="status-text">Firebase connesso &nbsp;|&nbsp; Votanti live: <strong id="status-voters">0</strong> &nbsp;|&nbsp; Domanda attiva: <strong id="status-active">nessuna</strong></div>
 </div>
 
-<!-- ── TICKER ── -->
+<!-- TICKER -->
 <div class="panel">
   <h2>🎞 Ticker (testo scorrevole)</h2>
   <label>Etichetta badge (es. LIVE, BREAK, ULTIME ORE)</label>
   <input id="ticker-tag" placeholder="LIVE" maxlength="20">
-  <label>Testo del ticker — separa i segmenti con  &#9679;</label>
-  <textarea id="ticker-text-input" placeholder="Es: Benvenuti al Townhall Strategy &amp; Transformation 2026 ● Vota su marcoraimondi.github.io/pages/townhall ● Grazie per la partecipazione" style="min-height:70px"></textarea>
-  <button class="btn btn-primary btn-sm" onclick="saveTicker()">✔ Aggiorna ticker</button>
+  <label>Testo del ticker</label>
+  <textarea id="ticker-text-input" placeholder="Es: Benvenuti ● Vota su marcoraimondi.github.io/pages/townhall ● Grazie per la partecipazione" style="min-height:70px"></textarea>
+  <button class="btn btn-primary btn-sm" id="btn-save-ticker">✔ Aggiorna ticker</button>
 </div>
 
-<!-- ── SENTIMENT ── -->
+<!-- SENTIMENT -->
 <div class="panel">
   <h2>😊 Sentiment</h2>
-  <p style="font-size:13px;color:#94a3b8;margin-bottom:14px;">I dati del grafico vengono conservati automaticamente. Usa il pulsante sotto solo per azzerare.</p>
+  <p style="font-size:13px;color:#94a3b8;margin-bottom:14px;">Lo storico del grafico viene conservato automaticamente. Usa il pulsante solo per un reset completo.</p>
   <div class="btn-row">
-    <button class="btn btn-orange btn-sm" onclick="clearSentiment()">🗑 Azzera sentiment e storico</button>
+    <button class="btn btn-orange btn-sm" id="btn-clear-sentiment">🗑 Azzera sentiment e storico</button>
   </div>
 </div>
 
-<!-- ── DOMANDE ── -->
+<!-- AGGIUNGI DOMANDA -->
 <div class="panel">
   <h2>➕ Aggiungi domanda</h2>
   <label>Testo della domanda</label>
@@ -84,18 +84,19 @@
   <div class="opt-row"><div class="lbl lbl-a">A</div><input id="opt-a" placeholder="Opzione A"></div>
   <label>Opzione B</label>
   <div class="opt-row"><div class="lbl lbl-b">B</div><input id="opt-b" placeholder="Opzione B"></div>
-  <label>Opzione C</label>
-  <div class="opt-row"><div class="lbl lbl-c">C</div><input id="opt-c" placeholder="Opzione C (opzionale)"></div>
-  <label>Opzione D</label>
-  <div class="opt-row"><div class="lbl lbl-d">D</div><input id="opt-d" placeholder="Opzione D (opzionale)"></div>
-  <button class="btn btn-primary" onclick="addQuestion()">+ Aggiungi domanda</button>
+  <label>Opzione C (opzionale)</label>
+  <div class="opt-row"><div class="lbl lbl-c">C</div><input id="opt-c" placeholder="Opzione C"></div>
+  <label>Opzione D (opzionale)</label>
+  <div class="opt-row"><div class="lbl lbl-d">D</div><input id="opt-d" placeholder="Opzione D"></div>
+  <button class="btn btn-primary" id="btn-add-q">+ Aggiungi domanda</button>
 </div>
 
+<!-- LISTA DOMANDE -->
 <div class="panel">
   <h2>📋 Domande</h2>
   <div class="btn-row" style="margin-bottom:14px">
-    <button class="btn btn-red btn-sm" onclick="stopQuestion()">⏹ Ferma tutto (nessuna attiva)</button>
-    <button class="btn btn-gray btn-sm" onclick="clearActiveVotes()">🗑 Reset voti domanda attiva</button>
+    <button class="btn btn-red btn-sm" id="btn-stop">⏹ Ferma tutto</button>
+    <button class="btn btn-gray btn-sm" id="btn-reset-votes">🗑 Reset voti domanda attiva</button>
   </div>
   <div class="q-list" id="q-list">
     <div style="color:#555;font-size:14px">Nessuna domanda ancora. Aggiungine una sopra.</div>
@@ -106,11 +107,12 @@
 
 <script type="module">
 import { db } from './firebase.js';
-import { ref, push, set, onValue, get, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 let questions = {};
 let activeQid = null;
 
+// ── Toast helper ──
 function toast(msg, color) {
   const el = document.getElementById('toast');
   el.textContent = msg;
@@ -119,12 +121,13 @@ function toast(msg, color) {
   setTimeout(() => el.classList.remove('show'), 2500);
 }
 
-// ── Live listeners ──
+// ── Firebase listeners ──
 onValue(ref(db,'active_question'), snap => {
   activeQid = snap.val();
-  document.getElementById('status-active').textContent = activeQid
-    ? (questions[activeQid] ? questions[activeQid].text.substring(0,30)+'…' : activeQid)
+  const label = activeQid && questions[activeQid]
+    ? questions[activeQid].text.substring(0,30) + '…'
     : 'nessuna';
+  document.getElementById('status-active').textContent = label;
   renderList();
 });
 
@@ -135,11 +138,12 @@ onValue(ref(db,'questions'), snap => {
 
 onValue(ref(db,'votes'), snap => {
   const allVotes = snap.val() || {};
-  if (!activeQid || !allVotes[activeQid]) { document.getElementById('status-voters').textContent = '0'; return; }
-  document.getElementById('status-voters').textContent = Object.keys(allVotes[activeQid]).length;
+  const count = (activeQid && allVotes[activeQid])
+    ? Object.keys(allVotes[activeQid]).length
+    : 0;
+  document.getElementById('status-voters').textContent = count;
 });
 
-// Load saved ticker on open
 onValue(ref(db,'ticker'), snap => {
   const t = snap.val();
   if (!t) return;
@@ -151,77 +155,101 @@ onValue(ref(db,'ticker'), snap => {
 function renderList() {
   const el = document.getElementById('q-list');
   const keys = Object.keys(questions);
-  if (!keys.length) { el.innerHTML = '<div style="color:#555;font-size:14px">Nessuna domanda ancora.</div>'; return; }
+  if (!keys.length) {
+    el.innerHTML = '<div style="color:#555;font-size:14px">Nessuna domanda ancora.</div>';
+    return;
+  }
   el.innerHTML = '';
   keys.forEach((qid, idx) => {
     const q = questions[qid];
     const isActive = qid === activeQid;
     const div = document.createElement('div');
     div.className = 'q-item' + (isActive ? ' active-q' : '');
-    div.innerHTML = `
-      <div class="q-item-text">
-        <div>${idx+1}. ${q.text}</div>
-        <div class="q-item-sub">${q.options.join(' / ')}</div>
-      </div>
-      ${isActive ? '<span class="active-badge">LIVE</span>' : ''}
-      <button class="btn btn-green btn-sm" onclick="activateQ('${qid}')">▶ Attiva</button>
-      <button class="btn btn-gray btn-sm" onclick="deleteQ('${qid}')">✕</button>`;
+
+    // Activate button
+    const btnActivate = document.createElement('button');
+    btnActivate.className = 'btn btn-green btn-sm';
+    btnActivate.textContent = '▶ Attiva';
+    btnActivate.addEventListener('click', async () => {
+      await set(ref(db,'active_question'), qid);
+      toast('Domanda attivata!');
+    });
+
+    // Delete button
+    const btnDelete = document.createElement('button');
+    btnDelete.className = 'btn btn-gray btn-sm';
+    btnDelete.textContent = '✕';
+    btnDelete.addEventListener('click', async () => {
+      if (!confirm('Eliminare questa domanda?')) return;
+      await remove(ref(db,'questions/'+qid));
+      await remove(ref(db,'votes/'+qid));
+      if (activeQid === qid) await set(ref(db,'active_question'), null);
+      toast('Domanda eliminata', '#f59e0b');
+    });
+
+    const textDiv = document.createElement('div');
+    textDiv.className = 'q-item-text';
+    textDiv.innerHTML = `<div>${idx+1}. ${q.text}</div><div class="q-item-sub">${q.options.join(' / ')}</div>`;
+
+    div.appendChild(textDiv);
+    if (isActive) {
+      const badge = document.createElement('span');
+      badge.className = 'active-badge';
+      badge.textContent = 'LIVE';
+      div.appendChild(badge);
+    }
+    div.appendChild(btnActivate);
+    div.appendChild(btnDelete);
     el.appendChild(div);
   });
 }
 
-// ── Actions ──
-window.addQuestion = async function() {
+// ── Button listeners ──
+document.getElementById('btn-add-q').addEventListener('click', async () => {
   const text = document.getElementById('new-q-text').value.trim();
-  const opts = ['opt-a','opt-b','opt-c','opt-d'].map(id => document.getElementById(id).value.trim()).filter(Boolean);
-  if (!text || opts.length < 2) { toast('Inserisci la domanda e almeno 2 opzioni', '#ef4444'); return; }
+  const opts = ['opt-a','opt-b','opt-c','opt-d']
+    .map(id => document.getElementById(id).value.trim())
+    .filter(Boolean);
+  if (!text || opts.length < 2) {
+    toast('Inserisci la domanda e almeno 2 opzioni', '#ef4444');
+    return;
+  }
   const newRef = push(ref(db,'questions'));
   await set(newRef, { text, options: opts, index: Object.keys(questions).length + 1, created: Date.now() });
   document.getElementById('new-q-text').value = '';
   ['opt-a','opt-b','opt-c','opt-d'].forEach(id => document.getElementById(id).value = '');
   toast('Domanda aggiunta!');
-};
+});
 
-window.activateQ = async function(qid) {
-  await set(ref(db,'active_question'), qid);
-  toast('Domanda attivata!');
-};
-
-window.stopQuestion = async function() {
+document.getElementById('btn-stop').addEventListener('click', async () => {
   await set(ref(db,'active_question'), null);
   toast('Domanda fermata', '#f59e0b');
-};
+});
 
-window.deleteQ = async function(qid) {
-  if (!confirm('Eliminare questa domanda?')) return;
-  // Remove only the question and its votes — NOT sentiment
-  await remove(ref(db,'questions/'+qid));
-  await remove(ref(db,'votes/'+qid));
-  if (activeQid === qid) await set(ref(db,'active_question'), null);
-  toast('Domanda eliminata', '#f59e0b');
-};
-
-window.clearActiveVotes = async function() {
-  if (!activeQid) { toast('Nessuna domanda attiva', '#ef4444'); return; }
+document.getElementById('btn-reset-votes').addEventListener('click', async () => {
+  if (!activeQid) {
+    toast('Nessuna domanda attiva', '#ef4444');
+    return;
+  }
   if (!confirm('Azzerare i voti della domanda attiva?')) return;
   await remove(ref(db,'votes/'+activeQid));
   toast('Voti azzerati', '#f59e0b');
-};
+});
 
-window.saveTicker = async function() {
+document.getElementById('btn-save-ticker').addEventListener('click', async () => {
   const text = document.getElementById('ticker-text-input').value.trim();
   const tag  = document.getElementById('ticker-tag').value.trim() || 'LIVE';
   if (!text) { toast('Inserisci il testo del ticker', '#ef4444'); return; }
   await set(ref(db,'ticker'), { text, tag, updated: Date.now() });
   toast('Ticker aggiornato!');
-};
+});
 
-window.clearSentiment = async function() {
+document.getElementById('btn-clear-sentiment').addEventListener('click', async () => {
   if (!confirm('Azzerare TUTTI i dati sentiment e lo storico del grafico?\nQuesta operazione è irreversibile.')) return;
   await remove(ref(db,'sentiment'));
   await remove(ref(db,'sentiment_history'));
   toast('Sentiment azzerato', '#f59e0b');
-};
+});
 </script>
 </body>
 </html>

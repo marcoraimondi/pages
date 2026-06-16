@@ -184,6 +184,18 @@ html, body {
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// Espone la config Firebase globalmente per il modulo
+window._fbConfig = {
+  apiKey: "AIzaSyAKUJyfsvSvYm-Alvv8xjF39mf9fH_GR40",
+  authDomain: "townhallstrategy.firebaseapp.com",
+  databaseURL: "https://townhallstrategy-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "townhallstrategy",
+  storageBucket: "townhallstrategy.firebasestorage.app",
+  messagingSenderId: "922581580105",
+  appId: "1:922581580105:web:56a85984338c470fb88298"
+};
+</script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, get, set } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -196,19 +208,14 @@ async function waitForChart(ms=5000) {
 }
 
 // Firebase init inline — no module dependency issues
-const app = initializeApp({
-  apiKey: "AIzaSyAKUJyfsvSvYm-Alvv8xjF39mf9fH_GR40",
-  authDomain: "townhallstrategy.firebaseapp.com",
-  databaseURL: "https://townhallstrategy-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "townhallstrategy",
-  storageBucket: "townhallstrategy.firebasestorage.app",
-  messagingSenderId: "922581580105",
-  appId: "1:922581580105:web:56a85984338c470fb88298"
-});
+const app = initializeApp(window._fbConfig);
 const db = getDatabase(app);
 
 // Wait for Chart.js before setting up chart
 await waitForChart();
+
+// Espone debug globale
+window._dbg = { allPts: null, lastAvg: null, lastRecord: null, fbConnected: false };
 
 const EMOJIS = ['😴','😐','🙂','😄','🔥'];
 const LABELS = ['Assonnata','Neutra','Positiva','Entusiasta','On fire!'];
@@ -322,9 +329,11 @@ let lastRecord = 0;
 
 function record(avg) {
   lastRecord = Date.now();
+  window._dbg.lastRecord = lastRecord;
   const d = new Date();
   const label = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
   allPts.push({ label, value: parseFloat(avg.toFixed(2)), ts: lastRecord });
+  window._dbg.allPts = allPts.length;
   if (allPts.length > 240) allPts = allPts.slice(-240);
   redrawChart();
 }
@@ -335,6 +344,7 @@ setInterval(() => {
 }, 5000);
 
 onValue(ref(db,'sentiment'), snap => {
+  window._dbg.fbConnected = true;
   const data = snap.val() || {};
   const vals = Object.values(data)
     .map(d => typeof d === 'object' ? d.value : d)
@@ -342,6 +352,7 @@ onValue(ref(db,'sentiment'), snap => {
 
   if (!vals.length) {
     lastAvg = null;
+    window._dbg.lastAvg = null;
     document.getElementById('mood-emoji').textContent = '😐';
     document.getElementById('mood-score').textContent = '—';
     document.getElementById('mood-label').textContent = 'In attesa...';
@@ -352,6 +363,7 @@ onValue(ref(db,'sentiment'), snap => {
 
   const avg = vals.reduce((a,b)=>a+b,0) / vals.length;
   lastAvg = avg;
+  window._dbg.lastAvg = avg;
 
   const idx = Math.min(4, Math.max(0, Math.round(avg) - 1));
   document.getElementById('mood-emoji').textContent = EMOJIS[idx];
@@ -360,8 +372,6 @@ onValue(ref(db,'sentiment'), snap => {
   document.getElementById('mood-fill').style.width = ((avg-1)/4*100) + '%';
   document.getElementById('sent-count').textContent = vals.length + ' risposte';
 
-  // Record a chart point on EVERY sentiment update
-  // (record() throttles internally to max 1 point per 30s)
   if (Date.now() - lastRecord >= 30000) record(avg);
 });
 

@@ -355,7 +355,10 @@ onValue(ref(db,'sentiment'), snap => {
 
   if (!vals.length) {
     lastAvg = null;
+    lastRecord = 0;
     window._dbg.lastAvg = null;
+    allPts = [];
+    redrawChart();
     document.getElementById('mood-emoji').textContent = '😐';
     document.getElementById('mood-score').textContent = '—';
     document.getElementById('mood-label').textContent = 'In attesa...';

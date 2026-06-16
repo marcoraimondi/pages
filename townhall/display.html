@@ -300,8 +300,9 @@ function redrawChart() {
   chart.update('none'); // no animation for redraw
 }
 
-// Listen for history changes
-onValue(ref(db,'sentiment_history'), snap => {
+// Load history ONCE at startup — don't listen with onValue because
+// every local push() would re-trigger and overwrite allPts mid-session.
+get(ref(db,'sentiment_history')).then(snap => {
   const d = snap.val();
   allPts = d ? Object.values(d).sort((a,b) => a.ts - b.ts) : [];
   redrawChart();
@@ -320,10 +321,15 @@ function record(avg) {
   lastRecord = Date.now();
   const d = new Date();
   const label = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
-  push(ref(db,'sentiment_history'), { label, value: parseFloat(avg.toFixed(2)), ts: lastRecord });
+  const pt = { label, value: parseFloat(avg.toFixed(2)), ts: lastRecord };
+  // Update in-memory immediately — don't wait for Firebase round-trip
+  allPts.push(pt);
+  redrawChart();
+  // Also persist to Firebase for cross-device sync and reload
+  push(ref(db,'sentiment_history'), pt);
 }
 
-// Record every 30s even if sentiment doesn't change
+// Record every 30s even if no new votes arrive
 setInterval(() => {
   if (lastAvg !== null && Date.now() - lastRecord >= 29000) record(lastAvg);
 }, 5000);
@@ -354,7 +360,7 @@ onValue(ref(db,'sentiment'), snap => {
   document.getElementById('mood-fill').style.width = ((avg-1)/4*100) + '%';
   document.getElementById('sent-count').textContent = vals.length + ' risposte';
 
-  // record if 30s passed
+  // Record immediately if 30s have passed
   if (Date.now() - lastRecord >= 29000) record(avg);
 });
 

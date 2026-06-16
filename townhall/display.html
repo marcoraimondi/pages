@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Townhall Display</title>
+<title>Townhall Strategy &amp; Transformation</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -17,7 +17,7 @@
     flex-direction: column;
   }
 
-  /* TOP BAR */
+  /* ── TOP BAR ── */
   .topbar {
     background: linear-gradient(90deg, #071428 0%, #0d2456 40%, #0a1e4a 100%);
     border-bottom: 3px solid #1d4ed8;
@@ -29,10 +29,10 @@
     flex-shrink: 0;
   }
   .topbar-left { display: flex; align-items: center; gap: 18px; }
-  .topbar-logo { font-size: 20px; font-weight: 900; letter-spacing: 4px; text-transform: uppercase; color: #fff; }
+  .topbar-logo { font-size: 18px; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; color: #fff; }
   .topbar-logo span { color: #3b82f6; }
   .topbar-divider { width: 2px; height: 30px; background: #1d4ed8; }
-  .topbar-title { font-size: 13px; color: #94a3b8; letter-spacing: 2px; text-transform: uppercase; font-weight: 400; }
+  .topbar-title { font-size: 12px; color: #94a3b8; letter-spacing: 2px; text-transform: uppercase; font-weight: 400; }
   .topbar-right { display: flex; align-items: center; gap: 20px; }
   .live-pill { display: flex; align-items: center; gap: 7px; background: #dc2626; border-radius: 4px; padding: 4px 10px; }
   .live-dot { width: 7px; height: 7px; background: #fff; border-radius: 50%; animation: blink 1s infinite; }
@@ -41,23 +41,25 @@
   .voter-pill { font-size: 12px; color: #94a3b8; }
   .voter-pill strong { color: #fff; font-size: 16px; }
 
-  /* MAIN */
-  .main { flex: 1; display: flex; gap: 0; overflow: hidden; }
+  /* ── MAIN ── */
+  .main { flex: 1; display: flex; gap: 0; overflow: hidden; min-height: 0; }
 
-  /* LEFT: VOTE AREA */
-  .vote-area { flex: 1; display: flex; flex-direction: column; padding: 20px 24px 0 28px; border-right: 1px solid #0f2040; overflow: hidden; }
+  /* ── VOTE AREA (left) ── */
+  .vote-area { flex: 1; display: flex; flex-direction: column; padding: 20px 24px 0 28px; border-right: 1px solid #0f2040; overflow: hidden; min-width: 0; }
 
-  #waiting-display { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; text-align: center; }
-  #waiting-display h2 { font-size: 28px; color: #3b82f6; letter-spacing: 4px; text-transform: uppercase; }
-  #waiting-display p { color: #475569; font-size: 16px; }
-  .scan-url { font-size: 18px; color: #e2e8f0; background: #0f1e3d; border: 1px solid #1d4ed8; border-radius: 10px; padding: 10px 24px; letter-spacing: 2px; margin-top: 8px; }
+  /* WAITING = fullscreen sentiment */
+  #waiting-display {
+    flex: 1; display: flex; flex-direction: column;
+    padding: 0; overflow: hidden;
+  }
 
-  #question-display { display: none; flex-direction: column; flex: 1; }
-  .q-header { margin-bottom: 16px; }
+  /* QUESTION display */
+  #question-display { display: none; flex-direction: column; flex: 1; min-height: 0; }
+  .q-header { margin-bottom: 16px; flex-shrink: 0; }
   .q-badge { display: inline-block; background: #1d4ed8; border-radius: 4px; padding: 4px 12px; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
   .q-text-display { font-size: 26px; font-weight: 900; line-height: 1.3; color: #f1f5f9; }
 
-  .bars { display: flex; flex-direction: column; gap: 11px; flex: 1; justify-content: center; }
+  .bars { display: flex; flex-direction: column; gap: 11px; flex: 1; justify-content: center; min-height: 0; overflow: hidden; }
   .bar-row { display: flex; align-items: center; gap: 12px; }
   .bar-letter { width: 38px; height: 38px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 17px; flex-shrink: 0; }
   .letter-a { background: #dc2626; } .letter-b { background: #16a34a; } .letter-c { background: #d97706; } .letter-d { background: #1d4ed8; }
@@ -71,105 +73,100 @@
   .bar-count { width: 44px; text-align: right; font-size: 20px; font-weight: 700; color: #fff; flex-shrink: 0; }
   .bar-pct { width: 48px; text-align: right; font-size: 15px; color: #64748b; flex-shrink: 0; }
 
-  /* RIGHT: SENTIMENT PANEL */
-  .sentiment-panel { width: 340px; flex-shrink: 0; display: flex; flex-direction: column; padding: 20px 20px 0 20px; }
+  /* ── SENTIMENT PANEL (right, always visible) ── */
+  .sentiment-panel {
+    width: 340px; flex-shrink: 0;
+    display: flex; flex-direction: column;
+    padding: 20px 20px 0 20px;
+    min-height: 0;
+  }
+  /* fullscreen mode: panel takes full width */
+  .main.fullscreen-sentiment .vote-area { display: none; }
+  .main.fullscreen-sentiment .sentiment-panel { width: 100%; padding: 20px 40px 0 40px; }
+  .main.fullscreen-sentiment .chart-wrap { flex: 1; }
+
   .panel-title { font-size: 11px; color: #3b82f6; letter-spacing: 3px; text-transform: uppercase; font-weight: 700; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #0f2040; }
 
-  /* Current mood */
-  .mood-now { background: #071428; border: 1px solid #1a3060; border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; }
+  .mood-now { background: #071428; border: 1px solid #1a3060; border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; flex-shrink: 0; }
   .mood-now-label { font-size: 11px; color: #64748b; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
   .mood-big { display: flex; align-items: center; gap: 12px; }
-  .mood-emoji-big { font-size: 40px; }
+  .mood-emoji-big { font-size: 40px; transition: all 0.4s; }
   .mood-right { }
   .mood-score { font-size: 32px; font-weight: 900; color: #f1f5f9; line-height: 1; }
   .mood-sub { font-size: 12px; color: #64748b; margin-top: 3px; }
   .mood-bar-wrap { margin-top: 10px; }
-  .mood-bar-track { width: 100%; height: 8px; background: #0f1e3d; border-radius: 4px; position: relative; overflow: hidden; }
+  .mood-bar-track { width: 100%; height: 8px; background: #0f1e3d; border-radius: 4px; overflow: hidden; }
   .mood-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #3b82f6 0%, #22c55e 50%, #f59e0b 80%, #ef4444 100%); transition: width 0.8s ease; }
   .mood-bar-labels { display: flex; justify-content: space-between; font-size: 10px; color: #475569; margin-top: 4px; }
 
-  /* Voters count */
-  .voters-row { font-size: 12px; color: #64748b; text-align: right; margin-bottom: 14px; }
+  .voters-row { font-size: 12px; color: #64748b; text-align: right; margin-bottom: 14px; flex-shrink: 0; }
   .voters-row strong { color: #94a3b8; }
 
-  /* CHART */
   .chart-wrap { background: #071428; border: 1px solid #1a3060; border-radius: 12px; padding: 12px 14px; flex: 1; display: flex; flex-direction: column; min-height: 0; }
-  .chart-title { font-size: 11px; color: #64748b; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
-  canvas#sentimentChart { flex: 1; width: 100% !important; }
+  .chart-title { font-size: 11px; color: #64748b; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; flex-shrink: 0; }
+  #sentimentChart { flex: 1; width: 100% !important; min-height: 0; }
 
-  /* TICKER — Sky TG24 style */
+  /* ── TICKER — Sky TG24 style ── */
   .ticker-bar {
-    height: 52px;
+    height: 56px;
     background: #04080f;
     border-top: 3px solid #1d4ed8;
     display: flex;
     align-items: stretch;
     flex-shrink: 0;
     overflow: hidden;
-    white-space: nowrap;
   }
   .ticker-logo {
     flex-shrink: 0;
     background: #071428;
-    border-right: 1px solid #1d4ed8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 16px;
-    gap: 0;
+    border-right: 2px solid #1d4ed8;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 18px;
   }
-  .ticker-logo .logo-sky { font-size: 13px; font-weight: 900; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
-  .ticker-logo .logo-tg24 { background: #dc2626; color: #fff; font-size: 13px; font-weight: 900; padding: 2px 6px; border-radius: 3px; margin-left: 4px; }
+  .ticker-logo .logo-main { font-size: 14px; font-weight: 900; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
+  .ticker-logo .logo-badge { background: #dc2626; color: #fff; font-size: 14px; font-weight: 900; padding: 3px 8px; border-radius: 3px; margin-left: 6px; }
   .ticker-time {
     flex-shrink: 0;
     background: #04080f;
     border-right: 2px solid #1d4ed8;
-    display: flex;
-    align-items: center;
-    padding: 0 18px;
-    font-size: 22px;
-    font-weight: 900;
-    color: #f1f5f9;
-    letter-spacing: 2px;
+    display: flex; align-items: center;
+    padding: 0 20px;
+    font-size: 26px; font-weight: 900; color: #f1f5f9;
+    letter-spacing: 3px;
     font-variant-numeric: tabular-nums;
-    min-width: 90px;
+    min-width: 105px;
   }
-  .ticker-breaking {
+  .ticker-tag {
     flex-shrink: 0;
     background: #eab308;
-    display: flex;
-    align-items: center;
-    padding: 0 14px;
-    font-size: 12px;
-    font-weight: 900;
-    color: #000;
-    letter-spacing: 2px;
-    text-transform: uppercase;
+    display: flex; align-items: center;
+    padding: 0 16px;
+    font-size: 14px; font-weight: 900; color: #000;
+    letter-spacing: 2px; text-transform: uppercase;
   }
   .ticker-scroll-wrap {
     flex: 1;
-    display: flex;
-    align-items: center;
+    display: flex; align-items: center;
     overflow: hidden;
     background: #04080f;
-    padding-left: 20px;
+    position: relative;
   }
   .ticker-scroll {
     display: inline-block;
     white-space: nowrap;
-    font-size: 15px;
+    font-size: 18px;
     color: #e2e8f0;
     font-weight: 500;
-    animation: tickerScroll 30s linear infinite;
+    position: absolute;
+    left: 0;
   }
-  @keyframes tickerScroll { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
 </style>
 </head>
 <body>
 
 <div class="topbar">
   <div class="topbar-left">
-    <div class="topbar-logo">Townhall <span>Strategy</span></div>
+    <div class="topbar-logo">Townhall <span>Strategy &amp; Transformation</span></div>
     <div class="topbar-divider"></div>
     <div class="topbar-title">Live Voting</div>
   </div>
@@ -179,14 +176,14 @@
   </div>
 </div>
 
-<div class="main">
-  <!-- LEFT: VOTE -->
+<div class="main" id="main-layout">
+
+  <!-- LEFT: VOTE / WAITING -->
   <div class="vote-area">
-    <div id="waiting-display">
-      <h2>In attesa...</h2>
-      <p>Il conduttore attiverà la prossima domanda</p>
-      <div class="scan-url">marcoraimondi.github.io/pages/townhall</div>
-    </div>
+    <!-- WAITING: hidden div (fullscreen sentiment is handled by CSS class on .main) -->
+    <div id="waiting-display" style="display:none;"></div>
+
+    <!-- QUESTION -->
     <div id="question-display">
       <div class="q-header">
         <div class="q-badge" id="disp-q-number">Domanda 1</div>
@@ -196,7 +193,7 @@
     </div>
   </div>
 
-  <!-- RIGHT: SENTIMENT -->
+  <!-- RIGHT: SENTIMENT (always visible) -->
   <div class="sentiment-panel">
     <div class="panel-title">Mood Plenaria</div>
 
@@ -205,7 +202,7 @@
       <div class="mood-big">
         <div class="mood-emoji-big" id="mood-emoji">😐</div>
         <div class="mood-right">
-          <div class="mood-score" id="mood-score">-</div>
+          <div class="mood-score" id="mood-score">—</div>
           <div class="mood-sub" id="mood-label">In attesa...</div>
         </div>
       </div>
@@ -224,42 +221,111 @@
   </div>
 </div>
 
+<!-- TICKER -->
 <div class="ticker-bar">
-  <div class="ticker-logo"><span class="logo-sky">town</span><span class="logo-tg24">HALL</span></div>
+  <div class="ticker-logo">
+    <span class="logo-main">Townhall</span>
+    <span class="logo-badge">LIVE</span>
+  </div>
   <div class="ticker-time" id="ticker-clock">--:--</div>
-  <div class="ticker-breaking" id="ticker-tag">LIVE</div>
+  <div class="ticker-tag" id="ticker-tag-el">LIVE</div>
   <div class="ticker-scroll-wrap">
-    <span class="ticker-scroll" id="ticker-text">Vota su marcoraimondi.github.io/pages/townhall &nbsp;&nbsp;&nbsp;&#9679;&nbsp;&nbsp;&nbsp; Il tuo voto è anonimo &nbsp;&nbsp;&nbsp;&#9679;&nbsp;&nbsp;&nbsp; Townhall Strategy 2026</span>
+    <span class="ticker-scroll" id="ticker-scroll-el">Vota su marcoraimondi.github.io/pages/townhall &nbsp;&#9679;&nbsp; Il tuo voto è anonimo &nbsp;&#9679;&nbsp; Townhall Strategy &amp; Transformation 2026</span>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script type="module">
 import { db } from './firebase.js';
-import { ref, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { ref, onValue, get, set, push, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-const EMOJIS = ['😴','😐','🙂','😄','🔥'];
+const EMOJIS      = ['😴','😐','🙂','😄','🔥'];
 const LABELS_TEXT = ['Assonnata','Neutra','Positiva','Entusiasta','On fire!'];
-const LETTERS = ['A','B','C','D'];
-const FILLS = ['fill-a','fill-b','fill-c','fill-d'];
-const LCLASSES = ['letter-a','letter-b','letter-c','letter-d'];
+const LETTERS     = ['A','B','C','D'];
+const FILLS       = ['fill-a','fill-b','fill-c','fill-d'];
+const LCLASSES    = ['letter-a','letter-b','letter-c','letter-d'];
 
 let currentQid = null;
+let votesUnsub = null; // track active votes listener
 
-// Chart setup
+// ── Clock ──
+function updateClock() {
+  const now = new Date();
+  document.getElementById('ticker-clock').textContent =
+    now.getHours().toString().padStart(2,'0') + ':' +
+    now.getMinutes().toString().padStart(2,'0');
+}
+updateClock();
+setInterval(updateClock, 10000);
+
+// ── Ticker scroll (JS-driven, no CSS animation issues) ──
+let tickerText = '';
+let tickerSpeed = 80; // px per second
+let tickerX = 0;
+let tickerRAF = null;
+let tickerWidth = 0;
+let wrapWidth = 0;
+let lastTime = null;
+
+function startTicker() {
+  const el = document.getElementById('ticker-scroll-el');
+  const wrap = document.querySelector('.ticker-scroll-wrap');
+  tickerWidth = el.getBoundingClientRect().width;
+  wrapWidth = wrap.getBoundingClientRect().width;
+  tickerX = wrapWidth; // start offscreen right
+  el.style.transform = `translateX(${tickerX}px)`;
+  if (tickerRAF) cancelAnimationFrame(tickerRAF);
+  lastTime = null;
+  function step(ts) {
+    if (!lastTime) lastTime = ts;
+    const dt = (ts - lastTime) / 1000;
+    lastTime = ts;
+    tickerX -= tickerSpeed * dt;
+    if (tickerX < -(tickerWidth + 40)) tickerX = wrapWidth;
+    el.style.transform = `translateX(${tickerX}px)`;
+    tickerRAF = requestAnimationFrame(step);
+  }
+  tickerRAF = requestAnimationFrame(step);
+}
+
+window.addEventListener('load', () => setTimeout(startTicker, 200));
+
+// ── Ticker config from Firebase ──
+onValue(ref(db,'ticker'), snap => {
+  const t = snap.val();
+  if (!t) return;
+  const el = document.getElementById('ticker-scroll-el');
+  const tagEl = document.getElementById('ticker-tag-el');
+  if (t.text && t.text !== tickerText) {
+    tickerText = t.text;
+    el.textContent = tickerText;
+    // re-measure and restart from right
+    setTimeout(() => {
+      tickerWidth = el.getBoundingClientRect().width;
+      wrapWidth = document.querySelector('.ticker-scroll-wrap').getBoundingClientRect().width;
+      tickerX = wrapWidth;
+    }, 50);
+  }
+  if (t.tag) tagEl.textContent = t.tag;
+  if (t.speed) tickerSpeed = t.speed;
+});
+
+// ── Chart setup ──
 const ctx = document.getElementById('sentimentChart').getContext('2d');
-const chartData = { labels: [], datasets: [{
-  label: 'Mood',
-  data: [],
-  borderColor: '#3b82f6',
-  backgroundColor: 'rgba(59,130,246,0.15)',
-  borderWidth: 2,
-  pointRadius: 3,
-  pointBackgroundColor: '#3b82f6',
-  tension: 0.4,
-  fill: true
-}]};
-
+const chartData = {
+  labels: [],
+  datasets: [{
+    label: 'Mood',
+    data: [],
+    borderColor: '#3b82f6',
+    backgroundColor: 'rgba(59,130,246,0.15)',
+    borderWidth: 2,
+    pointRadius: 3,
+    pointBackgroundColor: '#3b82f6',
+    tension: 0.4,
+    fill: true
+  }]
+};
 const sentChart = new Chart(ctx, {
   type: 'line',
   data: chartData,
@@ -267,84 +333,81 @@ const sentChart = new Chart(ctx, {
     responsive: true,
     maintainAspectRatio: false,
     animation: { duration: 600 },
-    plugins: { legend: { display: false }, tooltip: {
-      callbacks: { label: ctx => EMOJIS[Math.round(ctx.raw)-1] + ' ' + ctx.raw.toFixed(1) }
-    }},
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: c => EMOJIS[Math.round(c.raw)-1] + ' ' + c.raw.toFixed(1) }}
+    },
     scales: {
-      y: { min: 1, max: 5, ticks: { stepSize: 1, color: '#475569',
-        callback: v => EMOJIS[v-1] || v }, grid: { color: '#0f1e3d' }, border: { color: '#1a3060' }
-      },
-      x: { ticks: { color: '#475569', maxTicksLimit: 8 }, grid: { color: '#0f1e3d' }, border: { color: '#1a3060' } }
+      y: { min: 1, max: 5, ticks: { stepSize: 1, color: '#475569', callback: v => EMOJIS[v-1]||v }, grid: { color: '#0f1e3d' }, border: { color: '#1a3060' } },
+      x: { ticks: { color: '#475569', maxTicksLimit: 10 }, grid: { color: '#0f1e3d' }, border: { color: '#1a3060' } }
     }
   }
 });
 
-// Clock update
-function updateClock() {
-  const now = new Date();
-  const hh = now.getHours().toString().padStart(2,'0');
-  const mm = now.getMinutes().toString().padStart(2,'0');
-  document.getElementById('ticker-clock').textContent = hh + ':' + mm;
+// ── Sentiment history — persisted on Firebase under 'sentiment_history' ──
+function loadHistory() {
+  onValue(ref(db,'sentiment_history'), snap => {
+    const data = snap.val();
+    if (!data) return;
+    const pts = Object.values(data).sort((a,b)=>a.ts-b.ts);
+    chartData.labels = pts.map(p=>p.label);
+    chartData.datasets[0].data = pts.map(p=>p.value);
+    sentChart.update();
+  });
 }
-updateClock();
-setInterval(updateClock, 10000);
-
-// Ticker config from Firebase
-onValue(ref(db,'ticker'), snap => {
-  const t = snap.val();
-  if (!t) return;
-  if (t.text) document.getElementById('ticker-text').textContent = t.text;
-  if (t.tag) document.getElementById('ticker-tag').textContent = t.tag;
-  // Adjust animation speed based on text length
-  const len = (t.text || '').length;
-  const speed = Math.max(15, Math.min(60, Math.round(len * 0.18)));
-  document.getElementById('ticker-text').style.animationDuration = speed + 's';
-});
-
-// Sentiment history — snapshot every 30s
-let sentHistory = [];
-function recordSentiment(avg) {
-  const now = new Date();
-  const label = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0') + ':' + now.getSeconds().toString().padStart(2,'0');
-  sentHistory.push({ label, value: avg });
-  if (sentHistory.length > 60) sentHistory = sentHistory.slice(-60);
-  chartData.labels = sentHistory.map(p => p.label);
-  chartData.datasets[0].data = sentHistory.map(p => p.value);
-  sentChart.update();
-}
+loadHistory();
 
 let lastRecordTime = 0;
+function maybeRecord(avg) {
+  const now = Date.now();
+  if (now - lastRecordTime < 30000) return;
+  lastRecordTime = now;
+  const d = new Date();
+  const label = d.getHours().toString().padStart(2,'0') + ':' +
+                d.getMinutes().toString().padStart(2,'0') + ':' +
+                d.getSeconds().toString().padStart(2,'0');
+  push(ref(db,'sentiment_history'), { label, value: parseFloat(avg.toFixed(2)), ts: now });
+}
+
+// ── Sentiment live ──
 onValue(ref(db,'sentiment'), snap => {
   const data = snap.val() || {};
-  const vals = Object.values(data).map(d => typeof d === 'object' ? d.value : d).filter(v => v>=1&&v<=5);
-  if (!vals.length) return;
+  const vals = Object.values(data)
+    .map(d => typeof d === 'object' ? d.value : d)
+    .filter(v => v >= 1 && v <= 5);
+  if (!vals.length) {
+    document.getElementById('mood-score').textContent = '—';
+    document.getElementById('mood-label').textContent = 'In attesa...';
+    document.getElementById('mood-emoji').textContent = '😐';
+    document.getElementById('mood-bar-fill').style.width = '50%';
+    document.getElementById('sent-voters').textContent = '0 risposte sentiment';
+    return;
+  }
   const avg = vals.reduce((a,b)=>a+b,0)/vals.length;
   const pct = ((avg-1)/4)*100;
   const emojiIdx = Math.min(4, Math.max(0, Math.round(avg)-1));
-
   document.getElementById('mood-emoji').textContent = EMOJIS[emojiIdx];
   document.getElementById('mood-score').textContent = avg.toFixed(1) + ' / 5';
   document.getElementById('mood-label').textContent = LABELS_TEXT[emojiIdx];
   document.getElementById('mood-bar-fill').style.width = pct + '%';
   document.getElementById('sent-voters').textContent = vals.length + ' risposte sentiment';
-
-  // Record to chart every 30s
-  const now = Date.now();
-  if (now - lastRecordTime > 30000) {
-    lastRecordTime = now;
-    recordSentiment(parseFloat(avg.toFixed(2)));
-  }
+  maybeRecord(avg);
 });
 
-// Active question
+// ── Active question ──
 onValue(ref(db,'active_question'), snap => {
   const qid = snap.val();
+  const mainEl = document.getElementById('main-layout');
   if (!qid) {
-    document.getElementById('waiting-display').style.display = 'flex';
+    // No active question: fullscreen sentiment
+    mainEl.classList.add('fullscreen-sentiment');
     document.getElementById('question-display').style.display = 'none';
+    document.getElementById('voter-count').textContent = '0';
     currentQid = null;
+    if (votesUnsub) { votesUnsub(); votesUnsub = null; }
     return;
   }
+  mainEl.classList.remove('fullscreen-sentiment');
   if (qid !== currentQid) { currentQid = qid; loadQuestion(qid); }
 });
 
@@ -352,11 +415,11 @@ async function loadQuestion(qid) {
   const qSnap = await get(ref(db,'questions/'+qid));
   const q = qSnap.val();
   if (!q) return;
-  document.getElementById('waiting-display').style.display = 'none';
-  const qd = document.getElementById('question-display');
-  qd.style.display = 'flex';
-  document.getElementById('disp-q-number').textContent = 'Domanda ' + (q.index||'');
+
+  document.getElementById('question-display').style.display = 'flex';
+  document.getElementById('disp-q-number').textContent = 'Domanda ' + (q.index || '');
   document.getElementById('disp-q-text').textContent = q.text;
+
   const barsEl = document.getElementById('disp-bars');
   barsEl.innerHTML = '';
   q.options.forEach((opt, i) => {
@@ -370,7 +433,11 @@ async function loadQuestion(qid) {
       <div class="bar-pct" id="pct-${i}">0%</div>`;
     barsEl.appendChild(row);
   });
-  onValue(ref(db,'votes/'+qid), snap => {
+
+  // Unsubscribe previous votes listener if any
+  if (votesUnsub) { votesUnsub(); votesUnsub = null; }
+
+  votesUnsub = onValue(ref(db,'votes/'+qid), snap => {
     const votes = snap.val() || {};
     const counts = new Array(q.options.length).fill(0);
     Object.values(votes).forEach(v => { if (v < counts.length) counts[v]++; });
@@ -378,12 +445,9 @@ async function loadQuestion(qid) {
     document.getElementById('voter-count').textContent = total;
     counts.forEach((c,i) => {
       const pct = total ? Math.round(c/total*100) : 0;
-      const barEl = document.getElementById('bar-'+i);
-      if (barEl) barEl.style.width = pct+'%';
-      const cntEl = document.getElementById('cnt-'+i);
-      if (cntEl) cntEl.textContent = c;
-      const pctEl = document.getElementById('pct-'+i);
-      if (pctEl) pctEl.textContent = pct+'%';
+      const b = document.getElementById('bar-'+i); if (b) b.style.width = pct+'%';
+      const cnt = document.getElementById('cnt-'+i); if (cnt) cnt.textContent = c;
+      const p = document.getElementById('pct-'+i); if (p) p.textContent = pct+'%';
     });
   });
 }

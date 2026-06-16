@@ -96,7 +96,8 @@
   <h2>📋 Domande</h2>
   <div class="btn-row" style="margin-bottom:14px">
     <button class="btn btn-red btn-sm" id="btn-stop">⏹ Ferma tutto</button>
-    <button class="btn btn-gray btn-sm" id="btn-reset-votes">🗑 Reset voti domanda attiva</button>
+    <button class="btn btn-gray btn-sm" id="btn-reset-votes">🗑 Voti domanda attiva</button>
+    <button class="btn btn-red btn-sm" id="btn-reset-all-votes">🗑 Azzera TUTTI i voti</button>
   </div>
   <div class="q-list" id="q-list">
     <div style="color:#555;font-size:14px">Nessuna domanda ancora. Aggiungine una sopra.</div>
@@ -106,8 +107,20 @@
 <div class="toast" id="toast"></div>
 
 <script type="module">
-import { db } from './firebase.js';
-import { ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, push, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAKUJyfsvSvYm-Alvv8xjF39mf9fH_GR40",
+  authDomain: "townhallstrategy.firebaseapp.com",
+  databaseURL: "https://townhallstrategy-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "townhallstrategy",
+  storageBucket: "townhallstrategy.firebasestorage.app",
+  messagingSenderId: "922581580105",
+  appId: "1:922581580105:web:56a85984338c470fb88298"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
 let questions = {};
 let activeQid = null;
@@ -198,7 +211,19 @@ function renderList() {
       badge.textContent = 'LIVE';
       div.appendChild(badge);
     }
+    // Reset votes button per domanda
+    const btnResetQ = document.createElement('button');
+    btnResetQ.className = 'btn btn-gray btn-sm';
+    btnResetQ.textContent = '🗑 Voti';
+    btnResetQ.title = 'Azzera voti questa domanda';
+    btnResetQ.addEventListener('click', async () => {
+      if (!confirm('Azzerare i voti di questa domanda?')) return;
+      await remove(ref(db,'votes/'+qid));
+      toast('Voti azzerati', '#f59e0b');
+    });
+
     div.appendChild(btnActivate);
+    div.appendChild(btnResetQ);
     div.appendChild(btnDelete);
     el.appendChild(div);
   });
@@ -234,6 +259,12 @@ document.getElementById('btn-reset-votes').addEventListener('click', async () =>
   if (!confirm('Azzerare i voti della domanda attiva?')) return;
   await remove(ref(db,'votes/'+activeQid));
   toast('Voti azzerati', '#f59e0b');
+});
+
+document.getElementById('btn-reset-all-votes').addEventListener('click', async () => {
+  if (!confirm('Azzerare i voti di TUTTE le domande? Operazione irreversibile.')) return;
+  await remove(ref(db,'votes'));
+  toast('Tutti i voti azzerati', '#ef4444');
 });
 
 document.getElementById('btn-save-ticker').addEventListener('click', async () => {

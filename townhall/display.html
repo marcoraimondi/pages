@@ -344,30 +344,52 @@ const sentChart = new Chart(ctx, {
   }
 });
 
-// ── Sentiment history — persisted on Firebase under 'sentiment_history' ──
-function loadHistory() {
-  onValue(ref(db,'sentiment_history'), snap => {
-    const data = snap.val();
-    if (!data) return;
-    const pts = Object.values(data).sort((a,b)=>a.ts-b.ts);
-    chartData.labels = pts.map(p=>p.label);
-    chartData.datasets[0].data = pts.map(p=>p.value);
-    sentChart.update();
-  });
+// ── Sentiment history — persisted on Firebase, chart shows last 30 min ──
+const CHART_WINDOW_MS = 30 * 60 * 1000; // 30 minutes
+
+function renderChart(allPts) {
+  const cutoff = Date.now() - CHART_WINDOW_MS;
+  const pts = allPts.filter(p => p.ts >= cutoff);
+  chartData.labels = pts.map(p => p.label);
+  chartData.datasets[0].data = pts.map(p => p.value);
+  sentChart.update();
 }
-loadHistory();
+
+let allHistoryPts = [];
+
+onValue(ref(db,'sentiment_history'), snap => {
+  const data = snap.val();
+  if (!data) { allHistoryPts = []; renderChart([]); return; }
+  allHistoryPts = Object.values(data).sort((a,b) => a.ts - b.ts);
+  renderChart(allHistoryPts);
+});
+
+// Trim the chart window every 60s even if no new sentiment arrives
+setInterval(() => { if (allHistoryPts.length) renderChart(allHistoryPts); }, 60000);
 
 let lastRecordTime = 0;
+let lastAvg = null;
+
+function recordNow(avg) {
+  lastRecordTime = Date.now();
+  const d = new Date();
+  const label = d.getHours().toString().padStart(2,'0') + ':' +
+                d.getMinutes().toString().padStart(2,'0');
+  push(ref(db,'sentiment_history'), { label, value: parseFloat(avg.toFixed(2)), ts: Date.now() });
+}
+
 function maybeRecord(avg) {
   const now = Date.now();
   if (now - lastRecordTime < 30000) return;
-  lastRecordTime = now;
-  const d = new Date();
-  const label = d.getHours().toString().padStart(2,'0') + ':' +
-                d.getMinutes().toString().padStart(2,'0') + ':' +
-                d.getSeconds().toString().padStart(2,'0');
-  push(ref(db,'sentiment_history'), { label, value: parseFloat(avg.toFixed(2)), ts: now });
+  recordNow(avg);
 }
+
+// Periodic recording tick — fires every 30s, records if we have data and 30s have passed
+setInterval(() => {
+  if (lastAvg !== null && Date.now() - lastRecordTime >= 30000) {
+    recordNow(lastAvg);
+  }
+}, 5000); // check every 5s so we don't miss the 30s window by much
 
 // ── Sentiment live ──
 onValue(ref(db,'sentiment'), snap => {
@@ -376,6 +398,7 @@ onValue(ref(db,'sentiment'), snap => {
     .map(d => typeof d === 'object' ? d.value : d)
     .filter(v => v >= 1 && v <= 5);
   if (!vals.length) {
+    lastAvg = null;
     document.getElementById('mood-score').textContent = '—';
     document.getElementById('mood-label').textContent = 'In attesa...';
     document.getElementById('mood-emoji').textContent = '😐';
@@ -384,6 +407,7 @@ onValue(ref(db,'sentiment'), snap => {
     return;
   }
   const avg = vals.reduce((a,b)=>a+b,0)/vals.length;
+  lastAvg = avg;
   const pct = ((avg-1)/4)*100;
   const emojiIdx = Math.min(4, Math.max(0, Math.round(avg)-1));
   document.getElementById('mood-emoji').textContent = EMOJIS[emojiIdx];
